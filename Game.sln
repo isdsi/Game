@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameClient", "GameClient\Ga
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameServer", "GameServer\GameServer.csproj", "{D04860FA-64FE-46EC-8315-B3ACC20D1570}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameServer.Tests", "GameServer.Tests\GameServer.Tests.csproj", "{7AC53D39-6462-418C-A589-FE23657A2189}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,6 +43,18 @@ Global
 		{D04860FA-64FE-46EC-8315-B3ACC20D1570}.Release|x64.Build.0 = Release|Any CPU
 		{D04860FA-64FE-46EC-8315-B3ACC20D1570}.Release|x86.ActiveCfg = Release|Any CPU
 		{D04860FA-64FE-46EC-8315-B3ACC20D1570}.Release|x86.Build.0 = Release|Any CPU
+		{7AC53D39-6462-418C-A589-FE23657A2189}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7AC53D39-6462-418C-A589-FE23657A2189}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7AC53D39-6462-418C-A589-FE23657A2189}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{7AC53D39-6462-418C-A589-FE23657A2189}.Debug|x64.Build.0 = Debug|Any CPU
+		{7AC53D39-6462-418C-A589-FE23657A2189}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7AC53D39-6462-418C-A589-FE23657A2189}.Debug|x86.Build.0 = Debug|Any CPU
+		{7AC53D39-6462-418C-A589-FE23657A2189}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7AC53D39-6462-418C-A589-FE23657A2189}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7AC53D39-6462-418C-A589-FE23657A2189}.Release|x64.ActiveCfg = Release|Any CPU
+		{7AC53D39-6462-418C-A589-FE23657A2189}.Release|x64.Build.0 = Release|Any CPU
+		{7AC53D39-6462-418C-A589-FE23657A2189}.Release|x86.ActiveCfg = Release|Any CPU
+		{7AC53D39-6462-418C-A589-FE23657A2189}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
