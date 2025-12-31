@@ -1,13 +1,14 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Extensions.Logging;
 
-namespace ConsoleSolitaire
+namespace GameClientSolitaire
 {
-    enum Suit { Spades, Hearts, Diamonds, Clubs }
+    public enum Suit { Spades, Hearts, Diamonds, Clubs }
 
-    class Card
+    public class Card
     {
         public Suit Suit { get; }
         public int Rank { get; }
@@ -37,15 +38,22 @@ namespace ConsoleSolitaire
         }
     }
 
-    class SolitaireGame
+    public class SolitaireGame
     {
         private List<Card> deck = new List<Card>();
         private List<Card> waste = new List<Card>();
         private List<Card>[] foundations = new List<Card>[4];
         private List<Card>[] piles = new List<Card>[7];
 
-        public SolitaireGame()
+        // 시스템 로그
+        private ILogger _logger;
+
+        private readonly int _seed;
+
+        public SolitaireGame(ILogger logger, int seed = 777)
         {
+            _logger = logger;
+            _seed = seed;
             Console.OutputEncoding = Encoding.UTF8;
             InitializeGame();
         }
@@ -57,7 +65,7 @@ namespace ConsoleSolitaire
                 for (int r = 1; r <= 13; r++) deck.Add(new Card(s, r));
             }
 
-            Random rnd = new Random(777);
+            Random rnd = new Random(_seed);
             deck = deck.OrderBy(x => rnd.Next()).ToList();
 
             for (int i = 0; i < 4; i++) foundations[i] = new List<Card>();
@@ -238,14 +246,6 @@ namespace ConsoleSolitaire
             {
                 if (p.Count > 0 && !p.Last().IsFaceUp) p.Last().IsFaceUp = true;
             }
-        }
-    }
-
-    class Program
-    {
-        static void Main()
-        {
-            new SolitaireGame().Play();
         }
     }
 }

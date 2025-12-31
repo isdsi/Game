@@ -1,2 +1,2 @@
 # Game
-Solitare Game Server and Client in Network
+Solitaire Game Server and Client in Network
