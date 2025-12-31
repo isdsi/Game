@@ -19,6 +19,7 @@ public class PostgreSqlGameRepository : IGameRepository
     {
         try
         {
+            _logger.LogInformation($"ConnectionString : {_connectionString}");
             using var conn = new NpgsqlConnection(_connectionString);
             conn.Open();
             string createTableQuery = @"

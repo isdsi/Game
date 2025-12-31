@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
-
-string connectionString = "Host=localhost;Username=admin;Password=password123;Database=game_server_db";
+string dbHost = Environment.GetEnvironmentVariable("DB_HOST") ?? "localhost";
+string connectionString = $"Host={dbHost};Username=admin;Password=password123;Database=game_server_db";
 
 ILoggerFactory _loggerFactory;
 ILogger _logger;
