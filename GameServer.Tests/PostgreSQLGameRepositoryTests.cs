@@ -18,6 +18,21 @@ public class PostgreSqlGameRepositoryTests
         //_testConnectionString = "Host=localhost;Username=admin;Password=password123;Database=game_server_db";
     }
 
+    private bool ValidateLogMessage(object? v, string[] expectedStrings)
+    {
+        if (v == null) return false;
+        
+        string? message = v.ToString();
+        if (string.IsNullOrEmpty(message)) return false;
+
+        foreach(string expectedString in expectedStrings)
+        {
+            if (message.Contains(expectedString))
+                return true;
+        }
+        return false;
+    }
+
     [Fact]
     public void Initialize_WithInvalidConnectionString_ShouldLogError()
     {
@@ -30,14 +45,16 @@ public class PostgreSqlGameRepositoryTests
 
         // Assert: 에러가 발생했을 때 로그가 정확히 찍혔는지 검증
         // LogError가 호출되었는지 Moq를 통해 확인합니다.
+ 
         _mockLogger.Verify(
             x => x.Log(
                 LogLevel.Error,
                 It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString().Contains("기타 오류") || v.ToString().Contains("SQL 실행 중")),
+                It.Is<It.IsAnyType>((v, t) => ValidateLogMessage(v, new string[2] {"기타 오류", "SQL 실행 중"})),
                 It.IsAny<Exception>(),
                 It.Is<Func<It.IsAnyType, Exception?, string>>((v, t) => true)),
             Times.AtLeastOnce);
+             
     }
 
     [Fact]
@@ -55,7 +72,12 @@ public class PostgreSqlGameRepositoryTests
 
         // Assert
         _mockLogger.Verify(
-            x => x.Log(LogLevel.Error, It.IsAny<EventId>(), It.IsAny<It.IsAnyType>(), It.IsAny<Exception>(), It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+            x => x.Log(
+                LogLevel.Error, 
+                It.IsAny<EventId>(), 
+                It.IsAny<It.IsAnyType>(), 
+                It.IsAny<Exception>(), 
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
             Times.AtLeastOnce, 
             "DB가 연결되지 않았으므로 에러 로그가 반드시 찍혀야 합니다.");
     }

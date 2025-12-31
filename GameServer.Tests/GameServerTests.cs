@@ -17,6 +17,21 @@ public class GameServerTests
         _sut = new GameServer(_mockRepo.Object, _mockLogger.Object);
     }
 
+    private bool ValidateLogMessage(object? v, string[] expectedStrings)
+    {
+        if (v == null) return false;
+        
+        string? message = v.ToString();
+        if (string.IsNullOrEmpty(message)) return false;
+
+        foreach(string expectedString in expectedStrings)
+        {
+            if (message.Contains(expectedString))
+                return true;
+        }
+        return false;
+    }
+
     [Fact]
     public void HandleClientData_ValidFormat_ShouldSaveToRepository()
     {
@@ -38,7 +53,7 @@ public class GameServerTests
         _mockLogger.Verify(l => l.Log(
             LogLevel.Information,
             It.IsAny<EventId>(),
-            It.Is<It.IsAnyType>((v, t) => v.ToString().Contains("[DB 저장 완료]")),
+            It.Is<It.IsAnyType>((v, t) => ValidateLogMessage(v, new string[] {"[DB 저장 완료]"})),
             null,
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()), Times.Once);
     }
@@ -74,7 +89,7 @@ public class GameServerTests
         _mockLogger.Verify(l => l.Log(
             LogLevel.Error, // 또는 LogInformation (작성하신 코드 기준)
             It.IsAny<EventId>(),
-            It.Is<It.IsAnyType>((v, t) => v.ToString().Contains("처리 오류")),
+            It.Is<It.IsAnyType>((v, t) => ValidateLogMessage(v, new string[] {"처리 오류"})),
             null,
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()), Times.Once);
     }
