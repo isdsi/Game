@@ -87,6 +87,12 @@ namespace GameClientSolitaire
         {
             while (true)
             {
+                // 승리 여부 확인
+                if (IsGameWon())
+                {
+                    Console.WriteLine("\n축하합니다! 모든 카드를 맞추어 승리하셨습니다! 🎉");
+                    break;
+                }
                 //Console.Clear();
                 DrawBoard();
                 Console.WriteLine("\n[ 명령어 안내 ]");
@@ -98,7 +104,7 @@ namespace GameClientSolitaire
                 if (string.IsNullOrEmpty(input) || input == "q") break;
                 
                 ProcessInput(input);
-                CheckFlipTopCards();
+                CheckFlipTopCards(); // 최하단 카드를 open 한다.
             }
         }
 
@@ -134,7 +140,7 @@ namespace GameClientSolitaire
             }
         }
 
-        private void ProcessInput(string input)
+        public void ProcessInput(string input)
         {
             var command = CommandParser.Parse(input);
             if (!command.IsValid) return;
@@ -238,12 +244,18 @@ namespace GameClientSolitaire
             return target.Suit == card.Suit && target.Rank == card.Rank - 1;
         }
 
-        private void CheckFlipTopCards()
+        public void CheckFlipTopCards()
         {
             foreach (var p in piles)
             {
                 if (p.Count > 0 && !p.Last().IsFaceUp) p.Last().IsFaceUp = true;
             }
         }
+
+        public bool IsGameWon()
+        {
+            // 4개의 파운데이션이 각각 13장의 카드를 가지고 있으면 승리
+            return foundations.All(f => f.Count == 13);
+        }        
     }
 }
