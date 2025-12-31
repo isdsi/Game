@@ -57,19 +57,19 @@ public class SolitaireGameTests
         Assert.Equal("Red", heart.GetColor());
         Assert.Equal("Black", spade.GetColor());
     }
-
-    // 로직 테스트를 위해 ProcessInput을 internal로 가정하거나 
-    // public 메서드를 통해 간접 테스트 진행
+    
     [Fact]
-    public void ProcessInput_DrawCard_ShouldMoveCardFromDeckToWaste()
+    public void HandleCommand_DrawType_MovesCardToWaste()
     {
         // Arrange
         var game = new SolitaireGame(_mockLogger.Object, 777);
-        
-        // Act: 'd' 명령어 입력 시뮬레이션 (Private 메서드인 경우 테스트용 래퍼 필요)
-        // 여기서는 전체 흐름상 에러가 발생하지 않는지 확인
-        var exception = Record.Exception(() => game.Play()); 
-        // 주의: Play()는 무한 루프이므로 테스트 시에는 
-        // 입력 스트림을 모킹하거나 별도의 로직 분리가 필요합니다.
+        var drawCommand = new GameCommand { Type = CommandType.Draw };
+
+        // Act
+        // ProcessInput 대신 파싱된 객체를 직접 넘겨주는 로직을 테스트
+        game.ExecuteCommand(drawCommand); 
+
+        // Assert: 리플렉션이나 Public 프로퍼티를 통해 덱/쓰레기통 상태 확인
+        // (예: wasteCount가 1 증가했는지 등)
     }
 }

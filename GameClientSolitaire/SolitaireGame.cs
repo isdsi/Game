@@ -94,7 +94,7 @@ namespace GameClientSolitaire
                 Console.WriteLine(" f 1 2: 더미1->F2 | fw: 쓰레기통->F | q: 종료");
                 Console.Write("\n명령 입력 > ");
                 
-                string input = Console.ReadLine()?.ToLower();
+                string? input = Console.ReadLine()?.ToLower();
                 if (string.IsNullOrEmpty(input) || input == "q") break;
                 
                 ProcessInput(input);
@@ -136,74 +136,72 @@ namespace GameClientSolitaire
 
         private void ProcessInput(string input)
         {
-            try
+            var command = CommandParser.Parse(input);
+            if (!command.IsValid) return;
+
+            ExecuteCommand(command);
+        }
+
+        public void ExecuteCommand(GameCommand command)
+        {
+            switch (command.Type)
             {
-                string[] parts = input.Split(' ');
-                switch (parts[0])
-                {
-                    case "d":
-                        if (deck.Count == 0) 
-                        { 
-                            deck.AddRange(waste); 
-                            waste.Clear(); 
-                            deck.ForEach(c => c.IsFaceUp = false); 
-                            deck.Reverse(); // 덱을 다시 뒤집을 때 순서 유지
-                        }
-                        else 
-                        { 
-                            Card c = deck[0]; 
-                            deck.RemoveAt(0); 
-                            c.IsFaceUp = true; 
-                            waste.Add(c); 
-                        }
-                        break;
-
-                    case "mw": // 쓰레기통에서 더미로 이동 (mw [to])
-                        if (waste.Count > 0)
+                case CommandType.Draw:
+                    HandleDraw(); // 기존 d 로직
+                    break;
+                case CommandType.MoveWasteToPile: // 쓰레기통에서 더미로 이동 (mw [to])
+                    if (waste.Count > 0)
+                    {
+                        if (CanMoveToPile(waste.Last(), command.To))
                         {
-                            int toIdx = int.Parse(parts[1]) - 1;
-                            if (CanMoveToPile(waste.Last(), toIdx))
+                            piles[command.To].Add(waste.Last());
+                            waste.RemoveAt(waste.Count - 1);
+                        }
+                    }
+                    break;
+                case CommandType.MoveToPile: // 더미 간 이동 (m [from] [to] [count])
+                    MoveCards(command.From, command.To, command.Count);
+                    break;
+                case CommandType.MoveToFoundation: // 더미에서 파운데이션으로
+                    if (piles[command.From].Count > 0 && CanMoveToFoundation(piles[command.From].Last(), command.To))
+                    {
+                        foundations[command.To].Add(piles[command.From].Last());
+                        piles[command.From].RemoveAt(piles[command.From].Count - 1);
+                    }                
+                    break;
+                case CommandType.MoveWasteToFoundation: // 쓰레기통에서 파운데이션으로
+                    if (waste.Count > 0)
+                    {
+                        for (int i = 0; i < 4; i++)
+                        {
+                            if (CanMoveToFoundation(waste.Last(), i))
                             {
-                                piles[toIdx].Add(waste.Last());
+                                foundations[i].Add(waste.Last());
                                 waste.RemoveAt(waste.Count - 1);
+                                break;
                             }
                         }
-                        break;
+                    }
+                    break;
+            } 
+        }
 
-                    case "m": // 더미 간 이동 (m [from] [to] [count])
-                        int from = int.Parse(parts[1]) - 1;
-                        int to = int.Parse(parts[2]) - 1;
-                        int count = parts.Length > 3 ? int.Parse(parts[3]) : 1;
-                        MoveCards(from, to, count);
-                        break;
-
-                    case "f": // 더미에서 파운데이션으로
-                        int pIdx = int.Parse(parts[1]) - 1;
-                        int fIdx = int.Parse(parts[2]) - 1;
-                        if (piles[pIdx].Count > 0 && CanMoveToFoundation(piles[pIdx].Last(), fIdx))
-                        {
-                            foundations[fIdx].Add(piles[pIdx].Last());
-                            piles[pIdx].RemoveAt(piles[pIdx].Count - 1);
-                        }
-                        break;
-
-                    case "fw": // 쓰레기통에서 파운데이션으로
-                        if (waste.Count > 0)
-                        {
-                            for (int i = 0; i < 4; i++)
-                            {
-                                if (CanMoveToFoundation(waste.Last(), i))
-                                {
-                                    foundations[i].Add(waste.Last());
-                                    waste.RemoveAt(waste.Count - 1);
-                                    break;
-                                }
-                            }
-                        }
-                        break;
-                }
+        private void HandleDraw()
+        {
+            if (deck.Count == 0) 
+            { 
+                deck.AddRange(waste); 
+                waste.Clear(); 
+                deck.ForEach(c => c.IsFaceUp = false); 
+                deck.Reverse(); // 덱을 다시 뒤집을 때 순서 유지
             }
-            catch { /* Parsing errors ignored */ }
+            else 
+            { 
+                Card c = deck[0]; 
+                deck.RemoveAt(0); 
+                c.IsFaceUp = true; 
+                waste.Add(c); 
+            }
         }
 
         private void MoveCards(int from, int to, int count)
