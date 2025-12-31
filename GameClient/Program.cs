@@ -2,7 +2,7 @@
 using System.Net.Sockets;
 using System.Text;
 
-class SimpleClient
+public class SimpleClient
 {
     // 서버 IP와 포트 설정
     private const string ServerIP = "127.0.0.1";
