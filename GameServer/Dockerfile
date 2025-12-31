@@ -16,4 +16,4 @@ COPY --from=build /app/out .
 EXPOSE 5000
 
 # 서비스 등록 없이, 일반 실행 파일로 실행 (도커가 관리)
-ENTRYPOINT ["./GameServerDocker"]
+ENTRYPOINT ["./GameServer"]
