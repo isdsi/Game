@@ -1,5 +1,5 @@
 # D 드라이브에 데이터 저장 폴더 생성
-$DriveRoot = (Get-Location).Drive.Root
+$DriveRoot = $Home + "\"
 New-Item -Path ($DriveRoot + "DockerData\postgres") -ItemType Directory -Force
 
 # PostgreSQL 컨테이너 실행
