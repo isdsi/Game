@@ -1,51 +1,61 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:vm="clr-namespace:GameClientMaui"
-             x:Class="GameClientMaui.CardView"
-             x:DataType="vm:CardViewModel">
-  <ContentView.Resources>
-    <!-- Sizes and common values can be adjusted to match your app's design system -->
-    <Style x:Key="CardFrameStyle" TargetType="Frame">
-      <Setter Property="CornerRadius" Value="8" />
-      <Setter Property="HasShadow" Value="True" />
-      <Setter Property="Padding" Value="6" />
-      <Setter Property="WidthRequest" Value="72" />
-      <Setter Property="HeightRequest" Value="100" />
-      <Setter Property="BackgroundColor" Value="WhiteSmoke" />
-      <Style.Triggers>
-        <DataTrigger TargetType="Frame" Binding="{Binding IsFaceUp}" Value="False">
-          <Setter Property="BackgroundColor" Value="Brown" />
-        </DataTrigger>
-        <DataTrigger TargetType="Frame" Binding="{Binding IsFaceUp}" Value="True">
-          <Setter Property="BackgroundColor" Value="WhiteSmoke" />
-        </DataTrigger>
-      </Style.Triggers>
-    </Style>
+<ContentView
+    x:Class="GameClientMaui.CardView"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:GameClientMaui" x:DataType="vm:CardViewModel">
+    <ContentView.Resources>
+        <!--  Sizes and common values can be adjusted to match your app's design system  -->
+        <Style x:Key="CardFrameStyle" TargetType="Frame">
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="HasShadow" Value="True" />
+            <Setter Property="Padding" Value="6" />
+            <Setter Property="WidthRequest" Value="72" />
+            <Setter Property="HeightRequest" Value="100" />
+            <Setter Property="BackgroundColor" Value="WhiteSmoke" />
+            <Style.Triggers>
+                <DataTrigger
+                    Binding="{Binding IsFaceUp}"
+                    TargetType="Frame" Value="False">
+                    <Setter Property="BackgroundColor" Value="Blue" />
+                </DataTrigger>
+                <DataTrigger
+                    Binding="{Binding IsFaceUp}"
+                    TargetType="Frame" Value="True">
+                    <Setter Property="BackgroundColor" Value="WhiteSmoke" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
 
-    <Style x:Key="CardLabelStyle" TargetType="Label">
-      <Setter Property="TextColor" Value="Black" />
-      <Style.Triggers>
-        <DataTrigger TargetType="Label" Binding="{Binding Suit}" Value="Hearts">
-          <Setter Property="TextColor" Value="Red" />
-        </DataTrigger>
-        <DataTrigger TargetType="Label" Binding="{Binding Suit}" Value="Diamonds">
-          <Setter Property="TextColor" Value="Red" />
-        </DataTrigger>
-      </Style.Triggers>
-    </Style>
-  </ContentView.Resources>
+        <Style x:Key="CardLabelStyle" TargetType="Label">
+            <Setter Property="TextColor" Value="Black" />
+            <Style.Triggers>
+                <DataTrigger
+                    Binding="{Binding Suit}"
+                    TargetType="Label" Value="Hearts">
+                    <Setter Property="TextColor" Value="Red" />
+                </DataTrigger>
+                <DataTrigger
+                    Binding="{Binding Suit}"
+                    TargetType="Label" Value="Diamonds">
+                    <Setter Property="TextColor" Value="Red" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </ContentView.Resources>
 
-  <Frame Style="{StaticResource CardFrameStyle}" x:Name="CardFrame">
-    <Grid>
-      <!-- The Label binds to the whole object ('.') so CardViewModel.ToString() is used -->
-      <Label x:Name="CardLabel"
-             Style="{StaticResource CardLabelStyle}"
-             Text="{Binding .}"
-             HorizontalOptions="Center"
-             VerticalOptions="Center"
-             FontAttributes="Bold"
-             FontSize="20" />
-    </Grid>
-  </Frame>
+    <Frame x:Name="CardFrame" Style="{StaticResource CardFrameStyle}">
+        <Grid>
+            <Grid.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding FaceUpCommand}" />
+            </Grid.GestureRecognizers>
+            <!--  The Label binds to the whole object ('.') so CardViewModel.ToString() is used  -->
+            <Label
+                x:Name="CardLabel" FontAttributes="Bold" FontSize="20"
+                HorizontalOptions="Center"
+                Style="{StaticResource CardLabelStyle}"
+                Text="{Binding .}"
+                VerticalOptions="Center" />
+        </Grid>
+    </Frame>
 </ContentView>

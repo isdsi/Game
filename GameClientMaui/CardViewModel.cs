@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace GameClientMaui
 {
@@ -20,13 +21,6 @@ namespace GameClientMaui
         {
             get => _isFaceUp;
             set => SetProperty(ref _isFaceUp, value);
-        }
-
-        public CardViewModel(Suit suit, int rank)
-        {
-            Suit = suit;
-            Rank = rank;
-            _isFaceUp = false;
         }
 
         public string GetColor() => (Suit == Suit.Hearts || Suit == Suit.Diamonds) ? "Red" : "Black";
@@ -69,6 +63,21 @@ namespace GameClientMaui
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-    }
 
+        public ICommand FaceUpCommand { get; }
+
+        public CardViewModel(Suit suit, int rank)
+        {
+            Suit = suit;
+            Rank = rank;
+            _isFaceUp = false;
+
+            FaceUpCommand = new RelayCommand(FaceUp);
+        }
+
+        private void FaceUp()
+        {
+            IsFaceUp = !IsFaceUp;
+        }
+    }
 }
