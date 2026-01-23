@@ -1,25 +1,23 @@
-﻿namespace GameClientMaui
+﻿using System.Collections.ObjectModel;
+
+namespace GameClientMaui
 {
     public partial class MainPage : ContentPage
     {
-        int count = 0;
+        public ObservableCollection<CardViewModel> Cards { get; }
 
         public MainPage()
         {
             InitializeComponent();
-        }
 
-        private void OnCounterClicked(object sender, EventArgs e)
-        {
-            count++;
-
-            if (count == 1)
-                CounterBtn.Text = $"Clicked {count} time";
-            else
-                CounterBtn.Text = $"Clicked {count} times";
-
-            SemanticScreenReader.Announce(CounterBtn.Text);
+            Cards = new ObservableCollection<CardViewModel>
+            {
+                new CardViewModel(Suit.Spades, 1),
+                new CardViewModel(Suit.Hearts, 12),
+                new CardViewModel(Suit.Diamonds, 7),
+                new CardViewModel(Suit.Clubs, 13)
+            };
+            BindingContext = this;
         }
     }
-
 }
