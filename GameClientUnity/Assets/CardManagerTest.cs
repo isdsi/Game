@@ -48,7 +48,7 @@ public class CardManagerTest : MonoBehaviour
                 }
             }
         }
-        cardStack.GetChild(0)
+
     }
 
     // Update is called once per frame
