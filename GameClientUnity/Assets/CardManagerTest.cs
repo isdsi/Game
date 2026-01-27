@@ -48,7 +48,6 @@ public class CardManagerTest : MonoBehaviour
                 }
             }
         }
-
     }
 
     // Update is called once per frame
