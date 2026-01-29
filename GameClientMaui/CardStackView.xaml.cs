@@ -15,6 +15,17 @@ public partial class CardStackView : ContentView
         set => SetValue(CardsProperty, value);
     }
 
+    public static readonly BindableProperty OffsetYProperty =
+    BindableProperty.Create(nameof(OffsetY), typeof(int), typeof(CardStackView),
+        defaultValue: 30,
+        propertyChanged: (bindable, oldVal, newVal) => ((CardStackView)bindable).UpdateStack());
+
+    public int OffsetY
+    {
+        get => (int)GetValue(OffsetYProperty);
+        set => SetValue(OffsetYProperty, value);
+    }
+
     public CardStackView()
     {
         InitializeComponent();
@@ -41,7 +52,7 @@ public partial class CardStackView : ContentView
             var cardView = new CardView { BindingContext = cardVM };
 
             CardGrid.Add(cardView);
-            cardView.TranslationY = index * 30;
+            cardView.TranslationY = index * OffsetY;
             index++;
         }
     }

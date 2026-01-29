@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentView
     x:Class="GameClientMaui.CardView"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
@@ -17,7 +17,7 @@
                 <DataTrigger
                     Binding="{Binding IsFaceUp}"
                     TargetType="Frame" Value="False">
-                    <Setter Property="BackgroundColor" Value="Blue" />
+                    <Setter Property="BackgroundColor" Value="LightGray" />
                 </DataTrigger>
                 <DataTrigger
                     Binding="{Binding IsFaceUp}"
@@ -33,12 +33,12 @@
                 <DataTrigger
                     Binding="{Binding Suit}"
                     TargetType="Label" Value="Hearts">
-                    <Setter Property="TextColor" Value="Red" />
+                    <Setter Property="TextColor" Value="LightGray" />
                 </DataTrigger>
                 <DataTrigger
                     Binding="{Binding Suit}"
                     TargetType="Label" Value="Diamonds">
-                    <Setter Property="TextColor" Value="Red" />
+                    <Setter Property="TextColor" Value="LightGray" />
                 </DataTrigger>
             </Style.Triggers>
         </Style>
