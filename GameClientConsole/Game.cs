@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.Extensions.Logging;
 using GameClientPoco;
 
-namespace GameClientSolitaire
+namespace GameClientConsole
 {
     public class Game
     {

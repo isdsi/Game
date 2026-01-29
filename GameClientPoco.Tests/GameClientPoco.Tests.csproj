@@ -23,7 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GameClientPoco\GameClientPoco.csproj" />
-    <ProjectReference Include="..\GameClientSolitaire\GameClientSolitaire.csproj" />
+    <ProjectReference Include="..\GameClientConsole\GameClientConsole.csproj" />
   </ItemGroup>
 
 </Project>

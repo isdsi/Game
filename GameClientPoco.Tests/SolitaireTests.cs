@@ -3,7 +3,6 @@ using Xunit;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Linq;
-using GameClientSolitaire;
 using GameClientPoco;
 
 public class SolitaireTests
@@ -80,7 +79,7 @@ public class SolitaireTests
         var game = new Solitaire(_mockLogger.Object);
         
         // 리플렉션을 이용해 foundations 더미에 가짜로 13장씩 채우기
-        var field = typeof(Solitaire).GetField("foundations", 
+        var field = typeof(Solitaire).GetField("_foundations", 
             System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
         Assert.NotNull(field);
         var foundations = (List<Card>[]?)field.GetValue(game);
