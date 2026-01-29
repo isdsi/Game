@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Extensions.Logging;
 using GameClientConsole;
+using GameClientPoco;
 
 ILoggerFactory _loggerFactory;
 ILogger _logger;

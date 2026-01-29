@@ -3,15 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="GameClientMaui.MainPage"
              xmlns:local="clr-namespace:GameClientMaui">
-    <ScrollView>
-        <VerticalStackLayout Padding="30" Spacing="20">
-            <Label Text="label" 
-                   FontSize="24" HorizontalOptions="Center" />
-
-            <local:CardStackView Cards="{Binding CardVMs}" />
-
-            <Button Text="카드 섞기" 
-                    HorizontalOptions="Center" />
-        </VerticalStackLayout>
-    </ScrollView>
+    <Grid RowDefinitions="1*,6*" ColumnDefinitions="1*,1*,1*,1*,1*,1*,1*">
+        <local:CardStackView 
+            Grid.Row="0" Grid.Column="6"
+            Cards="{Binding CardVMs}"/>
+    </Grid>
 </ContentPage>

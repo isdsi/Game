@@ -14,8 +14,10 @@ namespace GameClientMaui
     {
         public ObservableCollection<CardViewModel> CardVMs { get; }
 
-        public MainViewModel()
-        {        
+        private Solitaire _solitaire;
+
+        public MainViewModel(Solitaire solitaire)
+        {
             CardVMs = new ObservableCollection<CardViewModel>
             {
                 new CardViewModel(new Card(Suit.Spades, 1)),
@@ -23,6 +25,7 @@ namespace GameClientMaui
                 new CardViewModel(new Card(Suit.Diamonds, 7)),
                 new CardViewModel(new Card(Suit.Clubs, 13))
             };
+            _solitaire = solitaire;
         }
     }
 }
