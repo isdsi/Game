@@ -3,13 +3,13 @@ using Xunit;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Linq;
-using GameClientSolitaire;
+using GameClientPoco;
 
-public class SolitaireGameTests
+public class SolitaireTests
 {
     private readonly Mock<ILogger> _mockLogger;
 
-    public SolitaireGameTests()
+    public SolitaireTests()
     {
         _mockLogger = new Mock<ILogger>();
     }
@@ -18,8 +18,8 @@ public class SolitaireGameTests
     public void Constructor_WithSpecificSeed_ShouldInitializePredictably()
     {
         // Arrange & Act: 동일한 시드로 두 개의 게임 생성
-        var game1 = new SolitaireGame(_mockLogger.Object, 777);
-        var game2 = new SolitaireGame(_mockLogger.Object, 777);
+        var game1 = new Solitaire(_mockLogger.Object, 777);
+        var game2 = new Solitaire(_mockLogger.Object, 777);
 
         // Assert: 시드가 같으면 내부 카드 배열이 동일해야 하므로 
         // 외부로 노출된 로직(예: Play 도중 출력되는 결과 등)이 동일하게 작동함을 기대할 수 있습니다.
@@ -62,7 +62,7 @@ public class SolitaireGameTests
     public void HandleCommand_DrawType_MovesCardToWaste()
     {
         // Arrange
-        var game = new SolitaireGame(_mockLogger.Object, 777);
+        var game = new Solitaire(_mockLogger.Object, 777);
         var drawCommand = new GameCommand { Type = CommandType.Draw };
 
         // Act
@@ -76,10 +76,10 @@ public class SolitaireGameTests
     public void IsGameWon_WhenAllFoundationsFull_ReturnsTrue()
     {
         // Arrange
-        var game = new SolitaireGame(_mockLogger.Object);
+        var game = new Solitaire(_mockLogger.Object);
         
         // 리플렉션을 이용해 foundations 더미에 가짜로 13장씩 채우기
-        var field = typeof(SolitaireGame).GetField("foundations", 
+        var field = typeof(Solitaire).GetField("_foundations", 
             System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
         Assert.NotNull(field);
         var foundations = (List<Card>[]?)field.GetValue(game);
@@ -104,7 +104,7 @@ public class SolitaireGameTests
     public void Game_WithSeed777_ShouldReachWinConditionIn143Moves()
     {
         // Arrange: 동일한 시드로 게임 초기화
-        var game = new SolitaireGame(_mockLogger.Object, 777);
+        var game = new Solitaire(_mockLogger.Object, 777);
         
         // 143개의 명령어 리스트 (사용자가 입력했던 순서대로)
         string[] winningMoves = new[] {
@@ -281,7 +281,10 @@ public class SolitaireGameTests
         foreach (var move in winningMoves)
         {
             // 143번의 과정 중 어디서든 예외가 발생하면 테스트 실패
-            game.ProcessInput(move);
+            //game.ProcessInput(move);
+            GameCommand command = CommandParser.Parse(move);
+            game.ExecuteCommand(command);
+
             // 필요하다면 각 스텝마다 중간 상태를 체크하는 코드를 넣을 수도 있음
 
             game.CheckFlipTopCards();
