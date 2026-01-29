@@ -39,6 +39,9 @@
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
 		
 		<DisableXbfLineInfo>False</DisableXbfLineInfo>
+		
+		<!-- 콘솔창에서 바로 실행하려면 필요하다. -->
+		<WindowsPackageType>None</WindowsPackageType>
 	</PropertyGroup>
 
 	<ItemGroup>
