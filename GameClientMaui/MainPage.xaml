@@ -3,12 +3,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="GameClientMaui.MainPage"
              xmlns:local="clr-namespace:GameClientMaui">
-    <Grid RowDefinitions="Auto, *" Background="Gray">
+    <Grid RowDefinitions="Auto, *" ColumnDefinitions="1*,1*,1*,1*,1*,1*,1*" Background="Gray">
         <CollectionView ItemsSource="{Binding Cards}"
                     ItemsLayout="VerticalList"
                     SelectionMode="None"
                     Margin="12"
-                    Grid.Row="1" HeightRequest="200" Background="LightGray">
+                    Grid.Column="6"
+                    Grid.Row="0" HeightRequest="200" Background="LightGray">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <local:CardView />

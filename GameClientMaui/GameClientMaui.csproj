@@ -66,6 +66,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\GameClientPoco\GameClientPoco.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <Compile Update="MainPage2.xaml.cs">
 	    <DependentUpon>MainPage2.xaml</DependentUpon>
 	  </Compile>
@@ -76,9 +80,6 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="MainPage2.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="SolitaireView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>
