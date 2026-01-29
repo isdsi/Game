@@ -7,19 +7,24 @@ using GameClientPoco;
 
 namespace GameClientSolitaire
 {
-    public class SolitaireGame
+    public class Solitaire
     {
         private List<Card> deck = new List<Card>();
         private List<Card> waste = new List<Card>();
         private List<Card>[] foundations = new List<Card>[4];
         private List<Card>[] piles = new List<Card>[7];
 
+        public IReadOnlyList<Card> Deck => deck;
+        public IReadOnlyList<Card> Waste => waste;
+        public IReadOnlyList<Card>[] Foundations => foundations;
+        public IReadOnlyList<Card>[] Piles => piles;
+
         // 시스템 로그
         private ILogger _logger;
 
         private readonly int _seed;
 
-        public SolitaireGame(ILogger logger, int seed = 777)
+        public Solitaire(ILogger logger, int seed = 777)
         {
             _logger = logger;
             _seed = seed;
@@ -50,71 +55,6 @@ namespace GameClientSolitaire
                     piles[i].Add(c);
                 }
             }
-        }
-
-        public void Play()
-        {
-            while (true)
-            {
-                // 승리 여부 확인
-                if (IsGameWon())
-                {
-                    Console.WriteLine("\n축하합니다! 모든 카드를 맞추어 승리하셨습니다! 🎉");
-                    break;
-                }
-                //Console.Clear();
-                DrawBoard();
-                Console.WriteLine("\n[ 명령어 안내 ]");
-                Console.WriteLine(" d: 카드 뽑기 | mw 1: 쓰레기통->더미1 | m 1 2 3: 더미1(3장)->더미2");
-                Console.WriteLine(" f 1 2: 더미1->F2 | fw: 쓰레기통->F | q: 종료");
-                Console.Write("\n명령 입력 > ");
-                
-                string? input = Console.ReadLine()?.ToLower();
-                if (string.IsNullOrEmpty(input) || input == "q") break;
-                
-                ProcessInput(input);
-                CheckFlipTopCards(); // 최하단 카드를 open 한다.
-            }
-        }
-
-        private void DrawBoard()
-        {
-            Console.WriteLine("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-            Console.WriteLine("   SOLITAIRE PRO - FULL INTERACTION VERSION");
-            Console.WriteLine("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-            
-            string deckStr = deck.Count > 0 ? "[XX]" : "[  ]";
-            string wasteStr = waste.Count > 0 ? waste.Last().ToString() : "[  ]";
-            Console.WriteLine($"덱: {deckStr} ({deck.Count}장)    쓰레기통: {wasteStr}");
-            
-            Console.Write("파운데이션: ");
-            for (int i = 0; i < 4; i++)
-            {
-                string fndStr = foundations[i].Count > 0 ? foundations[i].Last().ToString() : "[  ]";
-                Console.Write($"{i+1}:{fndStr} ");
-            }
-            
-            Console.WriteLine("\n\n테이블 더미 (1~7):");
-            int maxHeight = piles.Max(p => p.Count);
-            for (int row = 0; row < Math.Max(maxHeight, 1); row++)
-            {
-                for (int col = 0; col < 7; col++)
-                {
-                    if (row < piles[col].Count)
-                        Console.Write($"{piles[col][row]}   ");
-                    else
-                        Console.Write("        ");
-                }
-                Console.WriteLine();
-            }
-        }
-
-        public void ProcessInput(string input)
-        {
-            var command = CommandParser.Parse(input);
-            if (!command.IsValid) return;
-
-            ExecuteCommand(command);
         }
 
         public void ExecuteCommand(GameCommand command)

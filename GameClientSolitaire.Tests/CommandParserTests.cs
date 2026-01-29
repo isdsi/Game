@@ -1,4 +1,5 @@
 using GameClientSolitaire;
+using GameClientPoco;
 
 public class CommandParserTests
 {
