@@ -3,18 +3,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="GameClientMaui.MainPage"
              xmlns:local="clr-namespace:GameClientMaui">
-    <Grid RowDefinitions="Auto, *" ColumnDefinitions="1*,1*,1*,1*,1*,1*,1*" Background="Gray">
-        <CollectionView ItemsSource="{Binding Cards}"
-                    ItemsLayout="VerticalList"
-                    SelectionMode="None"
-                    Margin="12"
-                    Grid.Column="6"
-                    Grid.Row="0" HeightRequest="200" Background="LightGray">
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <local:CardView />
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
-    </Grid>
+    <ScrollView>
+        <VerticalStackLayout Padding="30" Spacing="20">
+            <Label Text="label" 
+                   FontSize="24" HorizontalOptions="Center" />
+
+            <local:CardStackView Cards="{Binding CardVMs}" />
+
+            <Button Text="카드 섞기" 
+                    HorizontalOptions="Center" />
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

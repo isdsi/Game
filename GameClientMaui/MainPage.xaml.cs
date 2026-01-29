@@ -1,24 +1,21 @@
-﻿using GameClientPoco;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 
 namespace GameClientMaui
 {
     public partial class MainPage : ContentPage
     {
-        public ObservableCollection<CardViewModel> Cards { get; }
+        // 뷰모델을 멤버로 보유
+        private readonly MainViewModel _viewModel;
 
         public MainPage()
         {
             InitializeComponent();
 
-            Cards = new ObservableCollection<CardViewModel>
-            {
-                new CardViewModel(new Card(Suit.Spades, 1)),
-                new CardViewModel(new Card(Suit.Hearts, 12)),
-                new CardViewModel(new Card(Suit.Diamonds, 7)),
-                new CardViewModel(new Card(Suit.Clubs, 13))
-            };
-            BindingContext = this;
+            // 뷰모델 생성 및 주입
+            _viewModel = new MainViewModel();
+
+            // 이 페이지의 영혼(BindingContext)을 결정
+            BindingContext = _viewModel;
         }
     }
 }

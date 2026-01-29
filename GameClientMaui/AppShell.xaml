@@ -9,20 +9,7 @@
 
 
     <TabBar>
-        <Tab Title="퀴즈 시작" Icon="dotnet_bot.png">
-            <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
-            
-        </Tab>
         <Tab Title="랭킹" Icon="dotnet_bot.png">
-            <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate local:MainPage2}"
-        Route="MainPage2" />
-        </Tab>
-        <Tab Title="설정" Icon="dotnet_bot.png">
             <ShellContent
         Title="Home"
         ContentTemplate="{DataTemplate local:MainPage}"
