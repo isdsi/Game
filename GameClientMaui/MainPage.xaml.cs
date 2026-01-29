@@ -1,23 +1,33 @@
-﻿using System.Collections.ObjectModel;
+﻿using GameClientPoco;
+using Microsoft.Extensions.Logging;
+using System.Collections.ObjectModel;
 
 namespace GameClientMaui
 {
     public partial class MainPage : ContentPage
     {
-        public ObservableCollection<CardViewModel> Cards { get; }
+        // 뷰모델을 멤버로 보유
+        private readonly MainViewModel _viewModel;
+
+        private Solitaire _solitaire;
+
+        private ILoggerFactory _loggerFactory;
+        private ILogger _logger;
 
         public MainPage()
         {
             InitializeComponent();
 
-            Cards = new ObservableCollection<CardViewModel>
-            {
-                new CardViewModel(Suit.Spades, 1),
-                new CardViewModel(Suit.Hearts, 12),
-                new CardViewModel(Suit.Diamonds, 7),
-                new CardViewModel(Suit.Clubs, 13)
-            };
-            BindingContext = this;
+            _loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
+            _logger = _loggerFactory.CreateLogger("GameClient");
+
+            _solitaire = new Solitaire(_logger, 777);
+
+            // 뷰모델 생성 및 주입
+            _viewModel = new MainViewModel(_solitaire);
+
+            // 이 페이지의 영혼(BindingContext)을 결정
+            BindingContext = _viewModel;
         }
     }
 }

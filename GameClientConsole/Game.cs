@@ -14,6 +14,7 @@ namespace GameClientConsole
         public Game(Solitaire solitaire)
         {
             _solitaire = solitaire;
+            Console.OutputEncoding = Encoding.UTF8;
         }
 
         public void Play()

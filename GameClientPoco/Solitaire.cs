@@ -1,8 +1,8 @@
+﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Microsoft.Extensions.Logging;
 
 namespace GameClientPoco
 {
@@ -27,7 +27,6 @@ namespace GameClientPoco
         {
             _logger = logger;
             _seed = seed;
-            Console.OutputEncoding = Encoding.UTF8;
             InitializeGame();
         }
 
@@ -56,6 +55,7 @@ namespace GameClientPoco
             }
         }
 
+
         public void ExecuteCommand(GameCommand command)
         {
             switch (command.Type)
@@ -81,7 +81,7 @@ namespace GameClientPoco
                     {
                         _foundations[command.To].Add(_piles[command.From].Last());
                         _piles[command.From].RemoveAt(_piles[command.From].Count - 1);
-                    }                
+                    }
                     break;
                 case CommandType.MoveWasteToFoundation: // 쓰레기통에서 파운데이션으로
                     if (_waste.Count > 0)
@@ -97,24 +97,24 @@ namespace GameClientPoco
                         }
                     }
                     break;
-            } 
+            }
         }
 
         private void HandleDraw()
         {
-            if (_deck.Count == 0) 
-            { 
-                _deck.AddRange(_waste); 
-                _waste.Clear(); 
-                _deck.ForEach(c => c.IsFaceUp = false); 
+            if (_deck.Count == 0)
+            {
+                _deck.AddRange(_waste);
+                _waste.Clear();
+                _deck.ForEach(c => c.IsFaceUp = false);
                 _deck.Reverse(); // 덱을 다시 뒤집을 때 순서 유지
             }
-            else 
-            { 
-                Card c = _deck[0]; 
-                _deck.RemoveAt(0); 
-                c.IsFaceUp = true; 
-                _waste.Add(c); 
+            else
+            {
+                Card c = _deck[0];
+                _deck.RemoveAt(0);
+                c.IsFaceUp = true;
+                _waste.Add(c);
             }
         }
 
@@ -138,7 +138,7 @@ namespace GameClientPoco
         {
             if (toIdx < 0 || toIdx > 6) return false;
             if (_piles[toIdx].Count == 0) return card.Rank == 13; // King only
-            
+
             Card target = _piles[toIdx].Last();
             return target.IsFaceUp && target.Rank == card.Rank + 1 && target.GetColor() != card.GetColor();
         }
@@ -147,7 +147,7 @@ namespace GameClientPoco
         {
             if (fIdx < 0 || fIdx > 3) return false;
             if (_foundations[fIdx].Count == 0) return card.Rank == 1; // Ace only
-            
+
             Card target = _foundations[fIdx].Last();
             return target.Suit == card.Suit && target.Rank == card.Rank - 1;
         }
@@ -164,6 +164,6 @@ namespace GameClientPoco
         {
             // 4개의 파운데이션이 각각 13장의 카드를 가지고 있으면 승리
             return _foundations.All(f => f.Count == 13);
-        }        
+        }
     }
 }
