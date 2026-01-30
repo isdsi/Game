@@ -63,8 +63,8 @@
             <Label
                 x:Name="CardLabel" FontAttributes="Bold" FontSize="20"
                 HorizontalOptions="Center"
-                Style="{StaticResource CardLabelStyle}"
                 Text="{Binding CardString}"
+                TextColor="{Binding CardColor}"
                 VerticalOptions="Center" />
         </Grid>
     </Frame>

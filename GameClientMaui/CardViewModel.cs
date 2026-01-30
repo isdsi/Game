@@ -32,7 +32,26 @@ namespace GameClientMaui
                     _card.IsFaceUp = value; // 엔진의 값을 바꾸고
                     OnPropertyChanged();      // UI에 알림
                     OnPropertyChanged(nameof(CardString));
+                    OnPropertyChanged(nameof(CardColor));
                 }
+            }
+        }
+
+        public Color CardColor
+        {
+            get
+            {
+#if RELEASE
+                return Color.Parse(_card.GetColor();
+#endif
+#if DEBUG
+                if (Color.Parse(_card.GetColor()) == Colors.Red)
+                {
+                    return Color.Parse("#FFE0E0");
+                }
+                else
+                    return Color.Parse("#E0E0E0");
+#endif
             }
         }
 

@@ -1,4 +1,4 @@
-namespace GameClientPoco
+﻿namespace GameClientPoco
 {
     public enum Suit { Spades, Hearts, Diamonds, Clubs }
 
@@ -15,7 +15,13 @@ namespace GameClientPoco
             IsFaceUp = false;
         }
 
-        public string GetColor() => (Suit == Suit.Hearts || Suit == Suit.Diamonds) ? "Red" : "Black";
+        public string GetColor() 
+        { 
+            if ((Suit == Suit.Hearts || Suit == Suit.Diamonds) && IsFaceUp == true)
+                return "Red";
+            else
+                return "Black";
+        }
 
         public override string ToString()
         {
