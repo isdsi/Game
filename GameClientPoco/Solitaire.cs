@@ -56,7 +56,7 @@ namespace GameClientPoco
         }
 
 
-        public void ExecuteCommand(GameCommand command)
+        public void ExecuteCommand(CardCommand command)
         {
             switch (command.Type)
             {

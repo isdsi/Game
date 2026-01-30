@@ -1,68 +1,127 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
+using GameClientPoco;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
-using System.Collections.ObjectModel;
-using GameClientPoco;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace GameClientMaui
 {
+    public partial class MainViewModel : ObservableObject,
+        IRecipient<CardStackClickMessage>
 
-    public partial class MainViewModel : ObservableObject
     {
-        public ObservableCollection<CardViewModel> DeckVMs { get; }
-        
-        public ObservableCollection<CardViewModel> WasteVMs { get; }
-        
-        public ObservableCollection<CardViewModel>[] FoundationVMs { get; }
-        
-        public ObservableCollection<CardViewModel>[] PileVMs { get; }
+        public CardStackViewModel Deck { get; }
+        public CardStackViewModel Waste { get; }
+        public CardStackViewModel[] Foundations { get; }
+        public CardStackViewModel[] Piles { get; }
 
         private Solitaire _solitaire;
 
-        public MainViewModel(Solitaire solitaire)
+        // 메신저
+        private readonly IMessenger _messenger;
+
+        public MainViewModel(Solitaire solitaire, IMessenger messenger)
         {
             _solitaire = solitaire;
-            DeckVMs = new ObservableCollection<CardViewModel>();
-            WasteVMs = new ObservableCollection<CardViewModel>();
-            FoundationVMs = new ObservableCollection<CardViewModel>[_solitaire.Foundations.Length];
-            PileVMs = new ObservableCollection<CardViewModel>[_solitaire.Piles.Length];
+            _messenger = messenger;
+            _messenger.Register<CardStackClickMessage>(this);
+
+            Deck = new CardStackViewModel(_messenger, "Deck");
+            Waste = new CardStackViewModel(_messenger, "Waste");
+            Foundations = new CardStackViewModel[_solitaire.Foundations.Length];
+            Piles = new CardStackViewModel[_solitaire.Piles.Length];
+            
 
             // 컬랙션 생성 하기
             for (int i = 0; i < _solitaire.Foundations.Length; i++)
             {
-                FoundationVMs[i] = new ObservableCollection<CardViewModel>();
+                Foundations[i] = new CardStackViewModel(_messenger, $"Foundations{i}");
             }
+            
             for (int i = 0; i < _solitaire.Piles.Length; i++)
             {
-                PileVMs[i] = new ObservableCollection<CardViewModel>();
+                Piles[i] = new CardStackViewModel(_messenger, $"Piles{i}");
             }
 
             // 카드 넣기
             foreach (var card in _solitaire.Deck)
             {
-                DeckVMs.Add(new CardViewModel(card));
+                Deck.Cards.Add(new CardViewModel(card, _messenger));
             }
             foreach (var card in _solitaire.Waste)
             {
-                WasteVMs.Add(new CardViewModel(card));
+                Waste.Cards.Add(new CardViewModel(card, _messenger));
             }
-            for(int i = 0; i < _solitaire.Foundations.Length; i++)
+            for (int i = 0; i < _solitaire.Foundations.Length; i++)
             {
                 foreach (var card in _solitaire.Foundations[i])
                 {
-                    FoundationVMs[i].Add(new CardViewModel(card));
+                    Foundations[i].Cards.Add(new CardViewModel(card, _messenger));
                 }
             }
             for (int i = 0; i < _solitaire.Piles.Length; i++)
             {
                 foreach (var card in _solitaire.Piles[i])
                 {
-                    PileVMs[i].Add(new CardViewModel(card));
+                    Piles[i].Cards.Add(new CardViewModel(card, _messenger));
                 }
             }
+        }
+
+        public void Receive(CardStackClickMessage message)
+        {
+            Trace.WriteLine($"메세지 수신 {message.ToString()} ");
+            if (message.StackName == "Deck")
+            {
+                _solitaire.ExecuteCommand(new CardCommand { Type = CommandType.Draw, IsValid = false });
+            }
+            
+        }
+    }
+
+    public class CardCommandMessage
+    {
+        private CardCommand _command {get; }
+        public CardCommand Command
+        {
+            get => _command;
+        }
+
+        public CardCommandMessage(CardCommand command)
+        {
+            _command = command;
+        }
+    }
+
+    public class CardStackClickMessage
+    {
+        private string _stackName { get; set; } = "";
+        public string StackName
+        {
+            get => _stackName;
+        }
+
+        private int _index { get; }
+        public int Index
+        {
+            get => _index;
+        }
+
+        public CardStackClickMessage(string stackName, int index)
+        {
+            _stackName = stackName;
+            _index = index;
+        }
+
+        public override string ToString()
+        {
+            return $"StackName {_stackName} Index {_index}";
         }
     }
 }
