@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="GameClientMaui.MainPage"
              xmlns:local="clr-namespace:GameClientMaui">
-    <Grid RowDefinitions="1*,6*" ColumnDefinitions="1*,1*,1*,1*,1*,1*,1*">
+    <Grid RowDefinitions="120,*" ColumnDefinitions="1*,1*,1*,1*,1*,1*,1*">
         <local:CardStackView Grid.Row="0" Grid.Column="0" Cards="{Binding FoundationVMs[0]}" OffsetY="1"/>
         <local:CardStackView Grid.Row="0" Grid.Column="1" Cards="{Binding FoundationVMs[1]}" OffsetY="1"/>
         <local:CardStackView Grid.Row="0" Grid.Column="2" Cards="{Binding FoundationVMs[2]}" OffsetY="1"/>
@@ -17,5 +17,16 @@
         <local:CardStackView Grid.Row="1" Grid.Column="4" Cards="{Binding PileVMs[4]}"/>
         <local:CardStackView Grid.Row="1" Grid.Column="5" Cards="{Binding PileVMs[5]}"/>
         <local:CardStackView Grid.Row="1" Grid.Column="6" Cards="{Binding PileVMs[6]}"/>
+        <!-- 반투명 효과 
+        <Border BackgroundColor="White" VerticalOptions="Fill" HorizontalOptions="Fill"
+                Grid.RowSpan="2"
+                Grid.ColumnSpan="7"
+                IsVisible="False"
+            Opacity="0.6" InputTransparent="True">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="10" />
+            </Border.StrokeShape>
+        </Border>
+        -->
     </Grid>
 </ContentPage>

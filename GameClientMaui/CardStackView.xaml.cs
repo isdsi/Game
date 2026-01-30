@@ -29,6 +29,11 @@ public partial class CardStackView : ContentView
     public CardStackView()
     {
         InitializeComponent();
+#if DEBUG
+        // 디버그 모드일 때는 눈에 확 띄는 오렌지색!
+        this.Resources["CardBackgroundColor"] = Colors.White;
+        this.Resources["CardBorderColor"] = Color.Parse("#F8F8F8");
+#endif
     }
 
     // 2. 컨트롤이 완전히 로드되었을 때 다시 한 번 시도
