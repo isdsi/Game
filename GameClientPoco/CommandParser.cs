@@ -11,10 +11,11 @@
         public int To { get; set; }
         public int Count { get; set; } = 1;
         public bool IsValid { get; set; } = true;
-        //public string ToString()
-        //{
-        //    return $"Type {Type.ToString()} From {From} To {To} Count {Count} IsValid {IsValid}";
-        //}
+
+        public override string ToString()
+        {
+            return $"Type {Type.ToString()} From {From} To {To} Count {Count} IsValid {IsValid}";
+        }
     }
 
     public static class CommandParser

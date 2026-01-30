@@ -20,8 +20,14 @@
         </Style>
     </ContentView.Resources>
     
-    <Frame Style="{StaticResource CardFrameStyle}">
-        <Grid x:Name="CardGrid" VerticalOptions="Start"/>
-    </Frame>
-
+    <Grid Background="Gray" RowDefinitions="1*,1*">
+        <Label 
+            Text="{Binding Name}"
+            VerticalOptions="Center" 
+            HorizontalOptions="Center" 
+            Grid.Row="0"/>
+        <Frame Style="{StaticResource CardFrameStyle}" >
+            <Grid x:Name="CardGrid" VerticalOptions="Start"/>
+        </Frame>
+    </Grid>
 </ContentView>

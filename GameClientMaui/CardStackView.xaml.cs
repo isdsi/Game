@@ -1,7 +1,7 @@
 ﻿using GameClientPoco;
 
 namespace GameClientMaui;
-// CardStackView.xaml.cs
+
 public partial class CardStackView : ContentView
 {
     public static readonly BindableProperty CardsProperty =
@@ -27,37 +27,48 @@ public partial class CardStackView : ContentView
     }
 
     public CardStackView()
-    {
-        InitializeComponent();
-#if DEBUG
-        // 디버그 모드일 때는 눈에 확 띄는 오렌지색!
-        this.Resources["CardBackgroundColor"] = Colors.White;
-        this.Resources["CardBorderColor"] = Color.Parse("#F8F8F8");
-#endif
-    }
+	{
+		InitializeComponent();
+	}
 
-    // 2. 컨트롤이 완전히 로드되었을 때 다시 한 번 시도
-    protected override void OnHandlerChanged()
+    // Convenience strongly-typed accessor for the view model in code-behind.
+    public CardStackViewModel? ViewModel
     {
-        base.OnHandlerChanged();
-        if (Handler != null) UpdateStack();
+        get => BindingContext as CardStackViewModel;
+        set => BindingContext = value;
+    }
+        
+    protected override void OnBindingContextChanged()
+    {
+        base.OnBindingContextChanged();
+
+        // 뷰의 바인딩 컨텍스트가 변경되는 시점에 Cards 속성을 뷰모델의 것과 바인딩한다.
+        if (BindingContext is CardStackViewModel vm)
+        {
+            // 뷰의 BindableProperty와 뷰모델의 속성을 연결합니다.
+            // MyStackColorProperty: View에 정의된 BindableProperty
+            // nameof(vm.ThemeColor): ViewModel에 정의된 속성 이름
+            this.SetBinding(CardStackView.CardsProperty, nameof(vm.Cards));
+        }
     }
 
     private void UpdateStack()
     {
         if (CardGrid == null)
             return;
+        if (ViewModel == null)
+            return;
         CardGrid.Children.Clear();
-        if (Cards == null) return;
+        if (ViewModel.Cards == null) return;
 
         int index = 0;
-        foreach (var cardVM in Cards)
+        foreach (var cardVM in ViewModel.Cards)
         {
             // 이제 cardVM을 그대로 BindingContext에 주입하면 끝!
             var cardView = new CardView { BindingContext = cardVM };
 
             CardGrid.Add(cardView);
-            cardView.TranslationY = index * OffsetY;
+            cardView.TranslationY = index * 30;
             index++;
         }
     }

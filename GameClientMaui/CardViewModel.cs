@@ -45,7 +45,7 @@ namespace GameClientMaui
             get
             {
 #if RELEASE
-                return Color.Parse(_card.GetColor();
+                return Color.Parse(_card.GetColor());
 #endif
 #if DEBUG
                 if (Color.Parse(_card.GetColor()) == Colors.Red)
@@ -67,18 +67,5 @@ namespace GameClientMaui
             _messenger = messenger;
         }
 
-        [RelayCommand(CanExecute = nameof(CanFaceUp))]
-        private void Click()
-        {
-            IsFaceUp = !IsFaceUp;
-            _messenger.Send(new CardCommandMessage(
-                new CardCommand{ Type = CommandType.Draw }) 
-                );
-        }
-
-        private bool CanFaceUp()
-        {
-            return true;
-        }
     }
 }
