@@ -57,7 +57,7 @@
     <Frame x:Name="CardFrame" Style="{StaticResource CardFrameStyle}">
         <Grid>
             <Grid.GestureRecognizers>
-                <TapGestureRecognizer Command="{Binding FaceUpCommand}" />
+                <TapGestureRecognizer Command="{Binding ClickCommand}" />
             </Grid.GestureRecognizers>
             <!--  The Label binds to the whole object ('.') so CardViewModel.ToString() is used  -->
             <Label

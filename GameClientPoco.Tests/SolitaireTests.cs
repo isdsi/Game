@@ -63,7 +63,7 @@ public class SolitaireTests
     {
         // Arrange
         var game = new Solitaire(_mockLogger.Object, 777);
-        var drawCommand = new GameCommand { Type = CommandType.Draw };
+        var drawCommand = new CardCommand { Type = CommandType.Draw };
 
         // Act
         // ProcessInput 대신 파싱된 객체를 직접 넘겨주는 로직을 테스트
@@ -282,7 +282,7 @@ public class SolitaireTests
         {
             // 143번의 과정 중 어디서든 예외가 발생하면 테스트 실패
             //game.ProcessInput(move);
-            GameCommand command = CommandParser.Parse(move);
+            CardCommand command = CommandParser.Parse(move);
             game.ExecuteCommand(command);
 
             // 필요하다면 각 스텝마다 중간 상태를 체크하는 코드를 넣을 수도 있음

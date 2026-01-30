@@ -1,4 +1,8 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using GameClientPoco;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -6,11 +10,10 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using GameClientPoco;
 
 namespace GameClientMaui
 {
-    public class CardViewModel : INotifyPropertyChanged
+    public partial class CardViewModel : ObservableObject
     {
         private Card _card;
 
@@ -55,36 +58,27 @@ namespace GameClientMaui
             }
         }
 
-        public event PropertyChangedEventHandler? PropertyChanged;
+        // 메신저
+        private readonly IMessenger _messenger;
 
-        protected bool SetProperty<T>(ref T backingStore, T value, [CallerMemberName] string propertyName = "")
-        {
-            if (EqualityComparer<T>.Default.Equals(backingStore, value))
-                return false;
-
-            backingStore = value;
-            OnPropertyChanged(propertyName);
-            return true;
-        }
-
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        public ICommand FaceUpCommand { get; }
-
-
-        public CardViewModel(Card card)
+        public CardViewModel(Card card, IMessenger messenger)
         {
             _card = card;
-
-            FaceUpCommand = new RelayCommand(FaceUp);
+            _messenger = messenger;
         }
 
-        private void FaceUp()
+        [RelayCommand(CanExecute = nameof(CanFaceUp))]
+        private void Click()
         {
             IsFaceUp = !IsFaceUp;
+            _messenger.Send(new CardCommandMessage(
+                new CardCommand{ Type = CommandType.Draw }) 
+                );
+        }
+
+        private bool CanFaceUp()
+        {
+            return true;
         }
     }
 }
