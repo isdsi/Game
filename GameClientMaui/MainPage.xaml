@@ -1,24 +1,24 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="GameClientMaui.MainPage"
              xmlns:local="clr-namespace:GameClientMaui">
     <Grid RowDefinitions="1*,2*" ColumnDefinitions="1*,1*,1*,1*,1*,1*,1*">
+
+        <local:CardStackView Grid.Row="0" Grid.Column="0" BindingContext="{Binding Foundations[0]}" OffsetY="1"  UpdateTick="{Binding UpdateTick}"/>
+        <local:CardStackView Grid.Row="0" Grid.Column="1" BindingContext="{Binding Foundations[1]}" OffsetY="1"  UpdateTick="{Binding UpdateTick}"/>
+        <local:CardStackView Grid.Row="0" Grid.Column="2" BindingContext="{Binding Foundations[2]}" OffsetY="1"  UpdateTick="{Binding UpdateTick}"/>
+        <local:CardStackView Grid.Row="0" Grid.Column="3" BindingContext="{Binding Foundations[3]}" OffsetY="1"  UpdateTick="{Binding UpdateTick}"/>
+        <local:CardStackView Grid.Row="0" Grid.Column="5" BindingContext="{Binding Waste}" OffsetY="1" UpdateTick="{Binding UpdateTick}"/>
+        <local:CardStackView Grid.Row="0" Grid.Column="6" BindingContext="{Binding Deck}" OffsetY="1" UpdateTick="{Binding UpdateTick}"/>
         
-        <local:CardStackView Grid.Row="0" Grid.Column="0" BindingContext="{Binding Foundations[0]}" OffsetY="1"/>
-        <local:CardStackView Grid.Row="0" Grid.Column="1" BindingContext="{Binding Foundations[1]}" OffsetY="1"/>
-        <local:CardStackView Grid.Row="0" Grid.Column="2" BindingContext="{Binding Foundations[2]}" OffsetY="1"/>
-        <local:CardStackView Grid.Row="0" Grid.Column="3" BindingContext="{Binding Foundations[3]}" OffsetY="1"/>
-        <local:CardStackView Grid.Row="0" Grid.Column="5" BindingContext="{Binding Waste}" OffsetY="1"/>
-        <local:CardStackView Grid.Row="0" Grid.Column="6" BindingContext="{Binding Deck}" OffsetY="1"/>
-        
-        <local:CardStackView Grid.Row="1" Grid.Column="0" BindingContext="{Binding Piles[0]}"/>
-        <local:CardStackView Grid.Row="1" Grid.Column="1" BindingContext="{Binding Piles[1]}"/>
-        <local:CardStackView Grid.Row="1" Grid.Column="2" BindingContext="{Binding Piles[2]}"/>
-        <local:CardStackView Grid.Row="1" Grid.Column="3" BindingContext="{Binding Piles[3]}"/>
-        <local:CardStackView Grid.Row="1" Grid.Column="4" BindingContext="{Binding Piles[4]}"/>
-        <local:CardStackView Grid.Row="1" Grid.Column="5" BindingContext="{Binding Piles[5]}"/>
-        <local:CardStackView Grid.Row="1" Grid.Column="6" BindingContext="{Binding Piles[6]}"/>
+        <local:CardStackView Grid.Row="1" Grid.Column="0" BindingContext="{Binding Piles[0]}"  UpdateTick="{Binding UpdateTick}"/>
+        <local:CardStackView Grid.Row="1" Grid.Column="1" BindingContext="{Binding Piles[1]}"  UpdateTick="{Binding UpdateTick}"/>
+        <local:CardStackView Grid.Row="1" Grid.Column="2" BindingContext="{Binding Piles[2]}"  UpdateTick="{Binding UpdateTick}"/>
+        <local:CardStackView Grid.Row="1" Grid.Column="3" BindingContext="{Binding Piles[3]}"  UpdateTick="{Binding UpdateTick}"/>
+        <local:CardStackView Grid.Row="1" Grid.Column="4" BindingContext="{Binding Piles[4]}"  UpdateTick="{Binding UpdateTick}"/>
+        <local:CardStackView Grid.Row="1" Grid.Column="5" BindingContext="{Binding Piles[5]}"  UpdateTick="{Binding UpdateTick}"/>
+        <local:CardStackView Grid.Row="1" Grid.Column="6" BindingContext="{Binding Piles[6]}"  UpdateTick="{Binding UpdateTick}"/>
         
         <!-- 반투명 효과 
         <Border BackgroundColor="White" VerticalOptions="Fill" HorizontalOptions="Fill"

@@ -1,4 +1,4 @@
-﻿namespace GameClientPoco
+namespace GameClientPoco
 {
     public enum Suit { Spades, Hearts, Diamonds, Clubs }
 

@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using GameClientPoco;
 using System;
@@ -49,21 +49,43 @@ namespace GameClientMaui
                 Piles[i] = new CardStackViewModel(_messenger, $"Piles{i}");
             }
 
+            UpdateStack();
+        }
+
+        private void UpdateStack()
+        {
+            // 카드 제거
+            Deck.Cards.Clear();
+            Waste.Cards.Clear();
+            for (int i = 0; i < _solitaire.Foundations.Length; i++)
+            {
+                Foundations[i].Cards.Clear();
+            }
+            for (int i = 0; i < _solitaire.Piles.Length; i++)
+            {
+                Piles[i].Cards.Clear();
+            }
+
             // 카드 넣기
             foreach (var card in _solitaire.Deck)
             {
                 Deck.Cards.Add(new CardViewModel(card, _messenger));
             }
+            Deck.UpdateTick++;
+
             foreach (var card in _solitaire.Waste)
             {
                 Waste.Cards.Add(new CardViewModel(card, _messenger));
             }
+            Waste.UpdateTick++;
+
             for (int i = 0; i < _solitaire.Foundations.Length; i++)
             {
                 foreach (var card in _solitaire.Foundations[i])
                 {
                     Foundations[i].Cards.Add(new CardViewModel(card, _messenger));
                 }
+                Foundations[i].UpdateTick++;
             }
             for (int i = 0; i < _solitaire.Piles.Length; i++)
             {
@@ -71,6 +93,7 @@ namespace GameClientMaui
                 {
                     Piles[i].Cards.Add(new CardViewModel(card, _messenger));
                 }
+                Piles[i].UpdateTick++;
             }
         }
 
@@ -80,6 +103,7 @@ namespace GameClientMaui
             if (message.StackName == "Deck")
             {
                 _solitaire.ExecuteCommand(new CardCommand { Type = CommandType.Draw, IsValid = false });
+                UpdateStack();
             }
             
         }

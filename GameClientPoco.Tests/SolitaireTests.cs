@@ -1,4 +1,4 @@
-﻿using Moq;
+using Moq;
 using Xunit;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;

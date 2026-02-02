@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using GameClientPoco;
@@ -22,6 +22,9 @@ namespace GameClientMaui
 
         [ObservableProperty]
         private ObservableCollection<CardViewModel> _cards = new ObservableCollection<CardViewModel>();
+
+        [ObservableProperty]
+        private long _updateTick = 1;
 
         public CardStackViewModel(IMessenger messenger, string name)
         {

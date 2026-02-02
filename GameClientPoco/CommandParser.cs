@@ -1,4 +1,4 @@
-﻿namespace GameClientPoco
+namespace GameClientPoco
 {
     // 명령어의 종류를 정의
     public enum CommandType { Draw, MoveToPile, MoveToFoundation, MoveWasteToPile, MoveWasteToFoundation, Quit, Unknown }

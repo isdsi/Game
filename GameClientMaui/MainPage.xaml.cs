@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
+using CommunityToolkit.Mvvm.Messaging;
 using GameClientPoco;
 using Microsoft.Extensions.Logging;
 using System.Collections.ObjectModel;
