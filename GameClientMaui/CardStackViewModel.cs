@@ -39,6 +39,13 @@ namespace GameClientMaui
             int index = _cards.IndexOf(cardVM);
             _messenger.Send(new CardStackClickMessage(_name, index));
         }
+
+        [RelayCommand]
+        private void Click(CardStackViewModel cardStackVM)
+        {
+            Trace.WriteLine($"스택 클릭 {cardStackVM.ToString()}");
+            _messenger.Send(new CardStackClickMessage(_name, -1));
+        }
     }
 
 }
