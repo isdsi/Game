@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using GameClientPoco;
@@ -21,20 +21,31 @@ namespace GameClientMaui
         private string _name = "";
 
         [ObservableProperty]
-        private ObservableCollection<CardViewModel> _cards = new ObservableCollection<CardViewModel>();
+        private ObservableCollection<CardViewModel> _cards;
 
-        public CardStackViewModel(IMessenger messenger, string name)
+        [ObservableProperty]
+        private long _updateTick = 1;
+
+        public CardStackViewModel(IMessenger messenger, ObservableCollection<CardViewModel> cards, string name)
         {
             _messenger = messenger;
+            _cards = cards;
             _name = name;
         }
 
         [RelayCommand]
         private void CardClick(CardViewModel cardVM)
         {
-            Trace.WriteLine($"카드 클릭 {cardVM.Card.ToString()}");
+            Trace.WriteLine($"카드 클릭 {((ICard)cardVM).GetString()}");
             int index = _cards.IndexOf(cardVM);
             _messenger.Send(new CardStackClickMessage(_name, index));
+        }
+
+        [RelayCommand]
+        private void Click(CardStackViewModel cardStackVM)
+        {
+            Trace.WriteLine($"스택 클릭 {cardStackVM.ToString()}");
+            _messenger.Send(new CardStackClickMessage(_name, -1));
         }
     }
 

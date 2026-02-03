@@ -1,4 +1,4 @@
-﻿namespace GameClientMaui
+namespace GameClientMaui
 {
     public partial class App : Application
     {

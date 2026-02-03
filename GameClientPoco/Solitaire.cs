@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,48 +6,66 @@ using System.Text;
 
 namespace GameClientPoco
 {
-    public class Solitaire
+    public class Solitaire<T> where T : ICard
     {
-        private List<Card> _deck = new List<Card>();
-        private List<Card> _waste = new List<Card>();
-        private List<Card>[] _foundations = new List<Card>[4];
-        private List<Card>[] _piles = new List<Card>[7];
+        // 이제 외부에서 주입된 리스트(ObservableCollection 포함)를 참조합니다.
+        private IList<T> _deck;
+        private IList<T> _waste;
+        private IList<T>[] _foundations;
+        private IList<T>[] _piles;
 
-        public IReadOnlyList<Card> Deck => _deck;
-        public IReadOnlyList<Card> Waste => _waste;
-        public IReadOnlyList<Card>[] Foundations => _foundations;
-        public IReadOnlyList<Card>[] Piles => _piles;
+        public const int FoundationCount = 4;
+        public const int PileCount = 7;
+        public const int SuitCardCount = 13;
 
         // 시스템 로그
         private ILogger _logger;
 
         private readonly int _seed;
 
-        public Solitaire(ILogger logger, int seed = 777)
+        private readonly Func<Suit, int, T> _cardFactory;
+
+        public Solitaire(ILogger logger,
+            IList<T> deck,
+            IList<T> waste,
+            IList<T>[] foundations,
+            IList<T>[] piles,
+            Func<Suit, int, T> cardFactory,
+            int seed = 777)
         {
             _logger = logger;
+            _deck = deck;
+            _waste = waste;
+            _foundations = foundations;
+            _piles = piles;
+            _cardFactory = cardFactory;
             _seed = seed;
-            InitializeGame();
-        }
 
-        private void InitializeGame()
-        {
             foreach (Suit s in Enum.GetValues(typeof(Suit)))
             {
-                for (int r = 1; r <= 13; r++) _deck.Add(new Card(s, r));
+                for (int r = 1; r <= SuitCardCount; r++) _deck.Add(_cardFactory(s, r));
             }
 
             Random rnd = new Random(_seed);
-            _deck = _deck.OrderBy(x => rnd.Next()).ToList();
 
-            for (int i = 0; i < 4; i++) _foundations[i] = new List<Card>();
-
-            for (int i = 0; i < 7; i++)
+            //_deck = _deck.OrderBy(x => rnd.Next()).ToList();
+            // OrderBy 대신 코드 내에서 랜덤 정렬
+            int n = _deck.Count;
+            while (n > 1)
             {
-                _piles[i] = new List<Card>();
+                n--;
+                int k = rnd.Next(n + 1);
+                // 값만 맞바꾸기 (Swap)
+                T value = _deck[k];
+                _deck[k] = _deck[n];
+                _deck[n] = value;
+            }
+
+            for (int i = 0; i < PileCount; i++)
+            {
                 for (int j = 0; j <= i; j++)
                 {
-                    Card c = _deck[0];
+                    T c = _deck[0];
                     _deck.RemoveAt(0);
                     if (j == i) c.IsFaceUp = true;
                     _piles[i].Add(c);
@@ -86,7 +104,7 @@ namespace GameClientPoco
                 case CommandType.MoveWasteToFoundation: // 쓰레기통에서 파운데이션으로
                     if (_waste.Count > 0)
                     {
-                        for (int i = 0; i < 4; i++)
+                        for (int i = 0; i < FoundationCount; i++)
                         {
                             if (CanMoveToFoundation(_waste.Last(), i))
                             {
@@ -104,14 +122,23 @@ namespace GameClientPoco
         {
             if (_deck.Count == 0)
             {
-                _deck.AddRange(_waste);
+                //_deck.AddRange(_waste);
+                foreach (var c in _waste)
+                {
+                    _deck.Add(c);
+                }
                 _waste.Clear();
-                _deck.ForEach(c => c.IsFaceUp = false);
+
+                //_deck.ForEach(c => c.IsFaceUp = false);
+                foreach (var c in _waste)
+                {
+                    c.IsFaceUp = false;
+                }
                 _deck.Reverse(); // 덱을 다시 뒤집을 때 순서 유지
             }
             else
             {
-                Card c = _deck[0];
+                T c = _deck[0];
                 _deck.RemoveAt(0);
                 c.IsFaceUp = true;
                 _waste.Add(c);
@@ -120,35 +147,56 @@ namespace GameClientPoco
 
         private void MoveCards(int from, int to, int count)
         {
-            if (from < 0 || from > 6 || to < 0 || to > 6) return;
+            if (from < 0 || from > (PileCount - 1) || to < 0 || to > (PileCount - 1)) return;
             if (_piles[from].Count < count) return;
 
             int startIndex = _piles[from].Count - count;
-            Card firstCardOfBunch = _piles[from][startIndex];
+            T firstCardOfBunch = _piles[from][startIndex];
 
             if (firstCardOfBunch.IsFaceUp && CanMoveToPile(firstCardOfBunch, to))
             {
-                List<Card> bunch = _piles[from].GetRange(startIndex, count);
-                _piles[from].RemoveRange(startIndex, count);
-                _piles[to].AddRange(bunch);
+
+                // 1. 옮길 카드 뭉치(bunch)를 먼저 확보합니다.
+                //List<ICard> bunch = _piles[from].GetRange(startIndex, count);
+                List<T> bunch = new List<T>();
+                for (int i = 0; i < count; i++)
+                {
+                    // startIndex 위치의 카드를 count만큼 순차적으로 읽어옵니다.
+                    bunch.Add(_piles[from][startIndex + i]);
+                }
+
+                // 2. 원본 더미에서 해당 구간을 삭제합니다.
+                // 뒤에서부터 지워야 인덱스 붕괴를 막을 수 있습니다.
+                //_piles[from].RemoveRange(startIndex, count);
+                for (int i = (startIndex + count - 1); i >= startIndex; i--)
+                {
+                    _piles[from].RemoveAt(i);
+                }
+
+                // 3. 대상 더미(to)에 확보한 뭉치를 추가합니다.
+                //_piles[to].AddRange(bunch);
+                for (int i = 0; i < bunch.Count; i++)
+                {
+                    _piles[to].Add(bunch[i]);
+                }
             }
         }
 
-        private bool CanMoveToPile(Card card, int toIdx)
+        private bool CanMoveToPile(T card, int toIdx)
         {
-            if (toIdx < 0 || toIdx > 6) return false;
-            if (_piles[toIdx].Count == 0) return card.Rank == 13; // King only
+            if (toIdx < 0 || toIdx > (PileCount - 1)) return false;
+            if (_piles[toIdx].Count == 0) return card.Rank == SuitCardCount; // King only
 
-            Card target = _piles[toIdx].Last();
+            T target = _piles[toIdx].Last();
             return target.IsFaceUp && target.Rank == card.Rank + 1 && target.GetColor() != card.GetColor();
         }
 
-        private bool CanMoveToFoundation(Card card, int fIdx)
+        private bool CanMoveToFoundation(T card, int fIdx)
         {
-            if (fIdx < 0 || fIdx > 3) return false;
+            if (fIdx < 0 || fIdx > (FoundationCount - 1)) return false;
             if (_foundations[fIdx].Count == 0) return card.Rank == 1; // Ace only
 
-            Card target = _foundations[fIdx].Last();
+            T target = _foundations[fIdx].Last();
             return target.Suit == card.Suit && target.Rank == card.Rank - 1;
         }
 
@@ -162,8 +210,8 @@ namespace GameClientPoco
 
         public bool IsGameWon()
         {
-            // 4개의 파운데이션이 각각 13장의 카드를 가지고 있으면 승리
-            return _foundations.All(f => f.Count == 13);
+            // FoundationCount개의 파운데이션이 각각 SuitCardCount장의 카드를 가지고 있으면 승리
+            return _foundations.All(f => f.Count == SuitCardCount);
         }
     }
 }

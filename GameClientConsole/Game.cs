@@ -9,11 +9,27 @@ namespace GameClientConsole
 {
     public class Game
     {
-        private Solitaire _solitaire;
+        private ILogger _logger;
 
-        public Game(Solitaire solitaire)
+        private Solitaire<Card> _solitaire;
+        
+        private IList<Card> _deck;
+        private IList<Card> _waste;
+        private IList<Card>[] _foundations = new IList<Card>[Solitaire<Card>.FoundationCount];
+        private IList<Card>[] _piles = new IList<Card>[Solitaire<Card>.PileCount];
+
+        public Game(ILogger logger)
         {
-            _solitaire = solitaire;
+            _logger = logger;
+            _deck = new List<Card>();
+            _waste = new List<Card>();
+            for (int i = 0; i < Solitaire<Card>.FoundationCount; i++) _foundations[i] = new List<Card>();
+            for (int i = 0; i < Solitaire<Card>.PileCount; i++)
+            {
+                _piles[i] = new List<Card>();
+            }
+            _solitaire = new Solitaire<Card>(_logger, _deck, _waste, _foundations, _piles,
+                (s, r) => new Card(s, r), 777);
             Console.OutputEncoding = Encoding.UTF8;
         }
 
@@ -48,25 +64,25 @@ namespace GameClientConsole
             Console.WriteLine("   SOLITAIRE PRO - FULL INTERACTION VERSION");
             Console.WriteLine("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
             
-            string deckStr = _solitaire.Deck.Count > 0 ? "[XX]" : "[  ]";
-            string wasteStr = _solitaire.Waste.Count > 0 ? _solitaire.Waste.Last().ToString() : "[  ]";
-            Console.WriteLine($"덱: {deckStr} ({_solitaire.Deck.Count}장)    쓰레기통: {wasteStr}");
+            string deckStr = _deck.Count > 0 ? "[XX]" : "[  ]";
+            string wasteStr = _waste.Count > 0 ? ((ICard)_waste.Last()).GetString() : "[  ]";
+            Console.WriteLine($"덱: {deckStr} ({_deck.Count}장)    쓰레기통: {wasteStr}");
             
             Console.Write("파운데이션: ");
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < Solitaire<Card>.FoundationCount; i++)
             {
-                string fndStr = _solitaire.Foundations[i].Count > 0 ? _solitaire.Foundations[i].Last().ToString() : "[  ]";
+                string fndStr = _foundations[i].Count > 0 ? ((ICard)_foundations[i].Last()).GetString() : "[  ]";
                 Console.Write($"{i+1}:{fndStr} ");
             }
             
             Console.WriteLine("\n\n테이블 더미 (1~7):");
-            int maxHeight = _solitaire.Piles.Max(p => p.Count);
+            int maxHeight = _piles.Max(p => p.Count);
             for (int row = 0; row < Math.Max(maxHeight, 1); row++)
             {
-                for (int col = 0; col < 7; col++)
+                for (int col = 0; col < Solitaire<Card>.PileCount; col++)
                 {
-                    if (row < _solitaire.Piles[col].Count)
-                        Console.Write($"{_solitaire.Piles[col][row]}   ");
+                    if (row < _piles[col].Count)
+                        Console.Write($"{((ICard)_piles[col][row]).GetString()}   ");
                     else
                         Console.Write("        ");
                 }
