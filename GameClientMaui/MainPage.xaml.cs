@@ -10,7 +10,6 @@ namespace GameClientMaui
         // 뷰모델을 멤버로 보유
         private readonly MainViewModel _viewModel;
 
-        private Solitaire _solitaire;
 
         private ILoggerFactory _loggerFactory;
         private ILogger _logger;
@@ -25,10 +24,8 @@ namespace GameClientMaui
             _loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
             _logger = _loggerFactory.CreateLogger("GameClient");
 
-            _solitaire = new Solitaire(_logger, 777);
-
             // 뷰모델 생성 및 주입
-            _viewModel = new MainViewModel(_solitaire, _messenger);
+            _viewModel = new MainViewModel(_logger, _messenger);
 
             // 이 페이지의 영혼(BindingContext)을 결정
             BindingContext = _viewModel;

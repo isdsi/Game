@@ -13,42 +13,23 @@ using System.Windows.Input;
 
 namespace GameClientMaui
 {
-    public partial class CardViewModel : ObservableObject
+    public partial class CardViewModel : ObservableObject, ICard
     {
-        private Card _card;
+        public Suit Suit { get; }
+        public int Rank { get; }
+        public bool IsFaceUp { get; set; }
 
-        public Card Card => _card;
+        public string CardString => ((ICard)this).GetString();
 
-        public Suit Suit => _card.Suit;
-
-        public int Rank => _card.Rank;
-
-        public string CardString => _card.ToString();
-
-        public bool IsFaceUp
-        {
-            get => _card.IsFaceUp;
-            set
-            {
-                if (_card.IsFaceUp != value)
-                {
-                    _card.IsFaceUp = value; // 엔진의 값을 바꾸고
-                    OnPropertyChanged();      // UI에 알림
-                    OnPropertyChanged(nameof(CardString));
-                    OnPropertyChanged(nameof(CardColor));
-                }
-            }
-        }
-
-        public Color CardColor
+        public Color UiCardColor
         {
             get
             {
 #if RELEASE
-                return Color.Parse(_card.GetColor());
+                return Color.Parse(((ICard)this).GetColor());
 #endif
 #if DEBUG
-                if (Color.Parse(_card.GetColor()) == Colors.Red)
+                if (Color.Parse(((ICard)this).GetColor()) == Colors.Red)
                 {
                     return Color.Parse("#FFE0E0");
                 }
@@ -58,14 +39,11 @@ namespace GameClientMaui
             }
         }
 
-        // 메신저
-        private readonly IMessenger _messenger;
-
-        public CardViewModel(Card card, IMessenger messenger)
+        public CardViewModel(Suit suit, int rank)
         {
-            _card = card;
-            _messenger = messenger;
+            Suit = suit;
+            Rank = rank;
+            IsFaceUp = false;
         }
-
     }
 }

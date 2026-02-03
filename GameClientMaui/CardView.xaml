@@ -67,7 +67,7 @@
                 x:Name="CardLabel" FontAttributes="Bold" FontSize="20"
                 HorizontalOptions="Center"
                 Text="{Binding CardString}"
-                TextColor="{Binding CardColor}"
+                TextColor="{Binding UiCardColor}"
                 VerticalOptions="Center" />
         </Grid>
     </Frame>

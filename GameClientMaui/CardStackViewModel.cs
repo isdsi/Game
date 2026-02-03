@@ -21,21 +21,22 @@ namespace GameClientMaui
         private string _name = "";
 
         [ObservableProperty]
-        private ObservableCollection<CardViewModel> _cards = new ObservableCollection<CardViewModel>();
+        private ObservableCollection<CardViewModel> _cards;
 
         [ObservableProperty]
         private long _updateTick = 1;
 
-        public CardStackViewModel(IMessenger messenger, string name)
+        public CardStackViewModel(IMessenger messenger, ObservableCollection<CardViewModel> cards, string name)
         {
             _messenger = messenger;
+            _cards = cards;
             _name = name;
         }
 
         [RelayCommand]
         private void CardClick(CardViewModel cardVM)
         {
-            Trace.WriteLine($"카드 클릭 {cardVM.Card.ToString()}");
+            Trace.WriteLine($"카드 클릭 {((ICard)cardVM).GetString()}");
             int index = _cards.IndexOf(cardVM);
             _messenger.Send(new CardStackClickMessage(_name, index));
         }

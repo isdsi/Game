@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using GameClientPoco;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -16,37 +17,58 @@ namespace GameClientMaui
         IRecipient<CardStackClickMessage>
 
     {
-        public CardStackViewModel Deck { get; }
-        public CardStackViewModel Waste { get; }
-        public CardStackViewModel[] Foundations { get; }
-        public CardStackViewModel[] Piles { get; }
+        private ILogger _logger;
 
-        private Solitaire _solitaire;
+        private Solitaire<CardViewModel> _solitaire;
+
+        private ObservableCollection<CardViewModel> _deck;
+        private ObservableCollection<CardViewModel> _waste;
+        private ObservableCollection<CardViewModel>[] _foundations = new ObservableCollection<CardViewModel>[4];
+        private ObservableCollection<CardViewModel>[] _piles = new ObservableCollection<CardViewModel>[7];
+
+        public CardStackViewModel DeckStack { get; }
+        public CardStackViewModel WasteStack { get; }
+        public CardStackViewModel[] FoundationStacks { get; }
+        public CardStackViewModel[] PileStacks { get; }
 
         // 메신저
         private readonly IMessenger _messenger;
 
-        public MainViewModel(Solitaire solitaire, IMessenger messenger)
+        public MainViewModel(ILogger logger, IMessenger messenger)
         {
-            _solitaire = solitaire;
+            _logger = logger;
+
+            // 카드 콜렉션 생성
+            _deck = new ObservableCollection<CardViewModel>();
+            _waste = new ObservableCollection<CardViewModel>();
+            for (int i = 0; i < Solitaire<CardViewModel>.FoundationCount; i++) _foundations[i] = new ObservableCollection<CardViewModel>();
+            for (int i = 0; i < Solitaire<CardViewModel>.PileCount; i++) _piles[i] = new ObservableCollection<CardViewModel>();
+
+            // 카드 콜렉션 주입
+            _solitaire = new Solitaire<CardViewModel>(_logger, _deck, _waste, _foundations, _piles,
+                (s, r) => new CardViewModel(s, r), 777);
+
             _messenger = messenger;
             _messenger.Register<CardStackClickMessage>(this);
 
-            Deck = new CardStackViewModel(_messenger, "Deck");
-            Waste = new CardStackViewModel(_messenger, "Waste");
-            Foundations = new CardStackViewModel[_solitaire.Foundations.Length];
-            Piles = new CardStackViewModel[_solitaire.Piles.Length];
+            // 카드 콜렉션 초기화
+            //_solitaire.InitializeGame();
+
+            DeckStack = new CardStackViewModel(_messenger, _deck, "Deck");
+            WasteStack = new CardStackViewModel(_messenger, _waste, "Waste");
+            FoundationStacks = new CardStackViewModel[Solitaire<CardViewModel>.FoundationCount];
+            PileStacks = new CardStackViewModel[Solitaire<CardViewModel>.PileCount];
             
 
             // 컬랙션 생성 하기
-            for (int i = 0; i < _solitaire.Foundations.Length; i++)
+            for (int i = 0; i < Solitaire<CardViewModel>.FoundationCount; i++)
             {
-                Foundations[i] = new CardStackViewModel(_messenger, $"Foundations{i}");
+                FoundationStacks[i] = new CardStackViewModel(_messenger, _foundations[i], $"Foundations{i}");
             }
             
-            for (int i = 0; i < _solitaire.Piles.Length; i++)
+            for (int i = 0; i < Solitaire<CardViewModel>.PileCount; i++)
             {
-                Piles[i] = new CardStackViewModel(_messenger, $"Piles{i}");
+                PileStacks[i] = new CardStackViewModel(_messenger, _piles[i], $"Piles{i}");
             }
 
             UpdateStack();
@@ -54,46 +76,15 @@ namespace GameClientMaui
 
         private void UpdateStack()
         {
-            // 카드 제거
-            Deck.Cards.Clear();
-            Waste.Cards.Clear();
-            for (int i = 0; i < _solitaire.Foundations.Length; i++)
+            DeckStack.UpdateTick++;
+            WasteStack.UpdateTick++;
+            for (int i = 0; i < Solitaire<CardViewModel>.FoundationCount; i++)
             {
-                Foundations[i].Cards.Clear();
+                FoundationStacks[i].UpdateTick++;
             }
-            for (int i = 0; i < _solitaire.Piles.Length; i++)
+            for (int i = 0; i < Solitaire<CardViewModel>.PileCount; i++)
             {
-                Piles[i].Cards.Clear();
-            }
-
-            // 카드 넣기
-            foreach (var card in _solitaire.Deck)
-            {
-                Deck.Cards.Add(new CardViewModel(card, _messenger));
-            }
-            Deck.UpdateTick++;
-
-            foreach (var card in _solitaire.Waste)
-            {
-                Waste.Cards.Add(new CardViewModel(card, _messenger));
-            }
-            Waste.UpdateTick++;
-
-            for (int i = 0; i < _solitaire.Foundations.Length; i++)
-            {
-                foreach (var card in _solitaire.Foundations[i])
-                {
-                    Foundations[i].Cards.Add(new CardViewModel(card, _messenger));
-                }
-                Foundations[i].UpdateTick++;
-            }
-            for (int i = 0; i < _solitaire.Piles.Length; i++)
-            {
-                foreach (var card in _solitaire.Piles[i])
-                {
-                    Piles[i].Cards.Add(new CardViewModel(card, _messenger));
-                }
-                Piles[i].UpdateTick++;
+                PileStacks[i].UpdateTick++;
             }
         }
 
