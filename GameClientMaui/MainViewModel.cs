@@ -13,9 +13,10 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace GameClientMaui
 {
-    public partial class MainViewModel : ObservableObject,
-        IRecipient<CardStackClickMessage>
 
+    public partial class MainViewModel : ObservableObject,
+        IRecipient<CardStackClickMessage>,
+        IRecipient<CardViewModelClickMessage>
     {
         private ILogger _logger;
 
@@ -30,6 +31,8 @@ namespace GameClientMaui
         public CardStackViewModel WasteStack { get; }
         public CardStackViewModel[] FoundationStacks { get; }
         public CardStackViewModel[] PileStacks { get; }
+
+        private CommandType state = CommandType.Unknown;
 
         // 메신저
         private readonly IMessenger _messenger;
@@ -50,6 +53,7 @@ namespace GameClientMaui
 
             _messenger = messenger;
             _messenger.Register<CardStackClickMessage>(this);
+            _messenger.Register<CardViewModelClickMessage>(this);
 
             // 카드 콜렉션 초기화
             //_solitaire.InitializeGame();
@@ -90,13 +94,31 @@ namespace GameClientMaui
 
         public void Receive(CardStackClickMessage message)
         {
-            Trace.WriteLine($"메세지 수신 {message.ToString()} ");
+            Trace.WriteLine($"메세지 수신 {message.GetString()} ");
             if (message.StackName == "Deck")
             {
                 _solitaire.ExecuteCommand(new CardCommand { Type = CommandType.Draw, IsValid = false });
                 UpdateStack();
             }
-            
+        }
+
+        public void Receive(CardViewModelClickMessage message)
+        {
+            Trace.WriteLine($"메세지 수신 {message.GetString()} ");
+            switch (state)
+            {
+                case CommandType.Unknown:
+                    if (message.StackVM != null && message.StackVM.Name == "Deck")
+                    {
+                        _solitaire.ExecuteCommand(new CardCommand { Type = CommandType.Draw, IsValid = false });
+                        UpdateStack();
+                    }
+                    else if (message.StackVM != null && message.StackVM.Name == "Waste")
+                    {
+                        WasteStack.IsSelected = true;
+                    }
+                    break;
+            }
         }
     }
 
@@ -134,9 +156,35 @@ namespace GameClientMaui
             _index = index;
         }
 
-        public override string ToString()
+        public string GetString()
         {
             return $"StackName {_stackName} Index {_index}";
+        }
+    }
+
+    public class CardViewModelClickMessage
+    {
+        public CardStackViewModel? StackVM { get; set; }
+        public CardViewModel? CardVM { get; set; }
+
+        public CardViewModelClickMessage(CardStackViewModel? stackVM, CardViewModel? cardVM)
+        {
+            CardVM = cardVM;
+            StackVM = stackVM;
+        }
+
+        public string GetString()
+        {
+            string s = "";
+            if (StackVM != null)
+            {
+                s += $"StackVM {StackVM.Name} ";
+            }
+            if (CardVM != null)
+            {
+                s += $"{((ICard)CardVM).GetString()}";
+            }
+            return s;
         }
     }
 }

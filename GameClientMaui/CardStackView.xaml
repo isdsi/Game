@@ -2,39 +2,15 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="GameClientMaui.CardStackView">
-    <ContentView.Resources>
-        <ResourceDictionary>
-            <Color x:Key="CardBackgroundColor">White</Color>
-            <Color x:Key="CardBorderColor">Black</Color>
-        </ResourceDictionary>
-        
-        <!--  Sizes and common values can be adjusted to match your app's design system  -->
-        <Style x:Key="CardFrameStyle" TargetType="Frame">
-            <Setter Property="CornerRadius" Value="8" />
-            <Setter Property="HasShadow" Value="True" />
-            <Setter Property="Padding" Value="3" />
-            <Setter Property="Margin" Value="10" />
-            <Setter Property="WidthRequest" Value="80" />
-            <Setter Property="BackgroundColor" Value="{DynamicResource CardBackgroundColor}" />
-            <Setter Property="BorderColor" Value="{DynamicResource CardBorderColor}" />
-        </Style>
-    </ContentView.Resources>
-    
-    <Grid Background="Gray" RowDefinitions="1*,1*">
-        <Label 
-            Text="{Binding Name}"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" 
-            Grid.Row="0"/>
-        <Frame Style="{StaticResource CardFrameStyle}" >
-            <Grid x:Name="CardGrid" VerticalOptions="Start">
-
-            </Grid>
-            <Frame.GestureRecognizers>
-                <TapGestureRecognizer 
-                        Command="{Binding ClickCommand}"
-                        CommandParameter="{Binding .}"/>
-            </Frame.GestureRecognizers>
-        </Frame>
-    </Grid>
+    <Frame CornerRadius="8" HasShadow="True" Padding="3" Margin="10" WidthRequest="80" 
+           BackgroundColor="{Binding BackgroundColor}"
+           BorderColor="{Binding BorderColor}">
+        <Grid x:Name="CardGrid" VerticalOptions="Start">
+        </Grid>
+        <Frame.GestureRecognizers>
+            <TapGestureRecognizer 
+                    Command="{Binding ClickCommand}"
+                    CommandParameter="{Binding .}"/>
+        </Frame.GestureRecognizers>
+    </Frame>
 </ContentView>

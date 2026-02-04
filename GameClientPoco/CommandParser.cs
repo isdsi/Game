@@ -12,7 +12,7 @@ namespace GameClientPoco
         public int Count { get; set; } = 1;
         public bool IsValid { get; set; } = true;
 
-        public override string ToString()
+        public string GetString()
         {
             return $"Type {Type.ToString()} From {From} To {To} Count {Count} IsValid {IsValid}";
         }

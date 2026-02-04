@@ -21,7 +21,42 @@ namespace GameClientMaui
 
         public string CardString => ((ICard)this).GetString();
 
-        public Color UiCardColor
+        private bool _isSelected = false;
+        public bool IsSelected
+        {
+            get => _isSelected;
+            set
+            {
+                if (_isSelected != value)
+                {
+                    _isSelected = value; // 엔진의 값을 바꾸고
+                    OnPropertyChanged();      // UI에 알림
+                    OnPropertyChanged(nameof(BackgroundColor));
+                    OnPropertyChanged(nameof(BorderColor));
+                }
+            }
+        }
+
+        public Color BackgroundColor
+        {
+            get
+            {
+                return Color.Parse("#FFFFFF");
+            }
+        }
+
+        public Color BorderColor
+        {
+            get
+            {
+                if (IsSelected)
+                    return Color.Parse("#E0FFE0");
+                else
+                    return Color.Parse("#E0E0E0");
+            }
+        }
+
+        public Color TextColor
         {
             get
             {
