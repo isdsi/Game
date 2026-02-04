@@ -18,7 +18,10 @@ namespace GameClientMaui
         private readonly IMessenger _messenger;
 
         [ObservableProperty]
-        private string _name = "";
+        private StackType _type = StackType.Unknown;
+
+        [ObservableProperty]
+        private int _index = -1;
 
         [ObservableProperty]
         private ObservableCollection<CardViewModel> _cards;
@@ -61,11 +64,12 @@ namespace GameClientMaui
             }
         }
 
-        public CardStackViewModel(IMessenger messenger, ObservableCollection<CardViewModel> cards, string name)
+        public CardStackViewModel(IMessenger messenger, ObservableCollection<CardViewModel> cards, StackType type, int index)
         {
             _messenger = messenger;
             _cards = cards;
-            _name = name;
+            _type = type;
+            _index = index;
         }
 
         [RelayCommand]

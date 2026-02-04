@@ -74,8 +74,9 @@ namespace GameClientPoco
         }
 
 
-        public void ExecuteCommand(CardCommand command)
+        public bool ExecuteCommand(CardCommand command)
         {
+            bool result = false;
             switch (command.Type)
             {
                 case CommandType.Draw:
@@ -84,21 +85,24 @@ namespace GameClientPoco
                 case CommandType.MoveWasteToPile: // 쓰레기통에서 더미로 이동 (mw [to])
                     if (_waste.Count > 0)
                     {
-                        if (CanMoveToPile(_waste.Last(), command.To))
+                        if (CanMoveWasteToPile(_waste.Last(), command.To))
                         {
                             _piles[command.To].Add(_waste.Last());
                             _waste.RemoveAt(_waste.Count - 1);
+                            result = true;
                         }
                     }
                     break;
-                case CommandType.MoveToPile: // 더미 간 이동 (m [from] [to] [count])
+                case CommandType.MovePileToPile: // 더미 간 이동 (m [from] [to] [count])
                     MoveCards(command.From, command.To, command.Count);
+                    result = true;
                     break;
-                case CommandType.MoveToFoundation: // 더미에서 파운데이션으로
-                    if (_piles[command.From].Count > 0 && CanMoveToFoundation(_piles[command.From].Last(), command.To))
+                case CommandType.MovePileToFoundation: // 더미에서 파운데이션으로
+                    if (_piles[command.From].Count > 0 && CanMovePileToFoundation(_piles[command.From].Last(), command.To))
                     {
                         _foundations[command.To].Add(_piles[command.From].Last());
                         _piles[command.From].RemoveAt(_piles[command.From].Count - 1);
+                        result = true;
                     }
                     break;
                 case CommandType.MoveWasteToFoundation: // 쓰레기통에서 파운데이션으로
@@ -106,16 +110,19 @@ namespace GameClientPoco
                     {
                         for (int i = 0; i < FoundationCount; i++)
                         {
-                            if (CanMoveToFoundation(_waste.Last(), i))
+                            if (CanMovePileToFoundation(_waste.Last(), i))
                             {
                                 _foundations[i].Add(_waste.Last());
                                 _waste.RemoveAt(_waste.Count - 1);
+                                result = true;
                                 break;
                             }
                         }
                     }
                     break;
             }
+
+            return result;
         }
 
         private void HandleDraw()
@@ -153,7 +160,7 @@ namespace GameClientPoco
             int startIndex = _piles[from].Count - count;
             T firstCardOfBunch = _piles[from][startIndex];
 
-            if (firstCardOfBunch.IsFaceUp && CanMoveToPile(firstCardOfBunch, to))
+            if (firstCardOfBunch.IsFaceUp && CanMoveWasteToPile(firstCardOfBunch, to))
             {
 
                 // 1. 옮길 카드 뭉치(bunch)를 먼저 확보합니다.
@@ -182,7 +189,7 @@ namespace GameClientPoco
             }
         }
 
-        private bool CanMoveToPile(T card, int toIdx)
+        private bool CanMoveWasteToPile(T card, int toIdx)
         {
             if (toIdx < 0 || toIdx > (PileCount - 1)) return false;
             if (_piles[toIdx].Count == 0) return card.Rank == SuitCardCount; // King only
@@ -191,7 +198,7 @@ namespace GameClientPoco
             return target.IsFaceUp && target.Rank == card.Rank + 1 && target.GetColor() != card.GetColor();
         }
 
-        private bool CanMoveToFoundation(T card, int fIdx)
+        private bool CanMovePileToFoundation(T card, int fIdx)
         {
             if (fIdx < 0 || fIdx > (FoundationCount - 1)) return false;
             if (_foundations[fIdx].Count == 0) return card.Rank == 1; // Ace only

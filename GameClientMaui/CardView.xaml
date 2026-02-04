@@ -17,11 +17,17 @@
             </Grid.GestureRecognizers>
             <!--  The Label binds to the whole object ('.') so CardViewModel.ToString() is used  -->
             <Label
-                x:Name="CardLabel" FontAttributes="Bold" FontSize="20"
-                HorizontalOptions="Center"
+                FontAttributes="Bold" FontSize="20"
+                HorizontalOptions="Start"
                 Text="{Binding CardString}"
                 TextColor="{Binding TextColor}"
-                VerticalOptions="Center" />
+                VerticalOptions="Start" />
+            <Label
+                FontAttributes="Bold" FontSize="20"
+                HorizontalOptions="End"
+                Text="{Binding CardString}"
+                TextColor="{Binding TextColor}"
+                VerticalOptions="End" />
         </Grid>
     </Frame>
 </ContentView>
