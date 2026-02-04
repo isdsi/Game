@@ -5,57 +5,10 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:vm="clr-namespace:GameClientMaui" x:DataType="vm:CardViewModel"
     xmlns:local="clr-namespace:GameClientMaui">
-    <ContentView.Resources>
-        <ResourceDictionary>
-            <Color x:Key="CardBackgroundColor">Blue</Color>
-            <Color x:Key="CardBorderColor">Blue</Color>
-            <Color x:Key="CardUpBackgroundColor">White</Color>
-            <Color x:Key="CardDownBackgroundColor">Blue</Color>
-            <Color x:Key="CardLabelTextColor">Black</Color>
-            <Color x:Key="CardLabelTextColorHeartsDiamonds">Red</Color>
-        </ResourceDictionary>
-
-        <!--  Sizes and common values can be adjusted to match your app's design system  -->
-        <Style x:Key="CardFrameStyle" TargetType="Frame">
-            <Setter Property="CornerRadius" Value="8" />
-            <Setter Property="HasShadow" Value="True" />
-            <Setter Property="Padding" Value="6" />
-            <Setter Property="WidthRequest" Value="72" />
-            <Setter Property="HeightRequest" Value="100" />
-            <Setter Property="BackgroundColor" Value="{DynamicResource CardBackgroundColor}" />
-            <Setter Property="BorderColor" Value="{DynamicResource CardBorderColor}" />
-            <Style.Triggers>
-                <DataTrigger
-                    Binding="{Binding IsFaceUp}"
-                    TargetType="Frame" Value="False">
-                    <Setter Property="BackgroundColor" Value="{DynamicResource CardDownBackgroundColor}" />
-                </DataTrigger>
-                <DataTrigger
-                    Binding="{Binding IsFaceUp}"
-                    TargetType="Frame" Value="True">
-                    <Setter Property="BackgroundColor" Value="{DynamicResource CardUpBackgroundColor}" />
-                </DataTrigger>
-            </Style.Triggers>
-        </Style>
-
-        <Style x:Key="CardLabelStyle" TargetType="Label">
-            <Setter Property="TextColor" Value="{DynamicResource CardLabelTextColor}" />
-            <Style.Triggers>
-                <DataTrigger
-                    Binding="{Binding Suit}"
-                    TargetType="Label" Value="Hearts">
-                    <Setter Property="TextColor" Value="{DynamicResource CardLabelTextColorHeartsDiamonds}" />
-                </DataTrigger>
-                <DataTrigger
-                    Binding="{Binding Suit}"
-                    TargetType="Label" Value="Diamonds">
-                    <Setter Property="TextColor" Value="{DynamicResource CardLabelTextColorHeartsDiamonds}" />
-                </DataTrigger>
-            </Style.Triggers>
-        </Style>
-    </ContentView.Resources>
-
-    <Frame x:Name="CardFrame" Style="{StaticResource CardFrameStyle}">
+    <Frame x:Name="CardFrame" CornerRadius="8" HasShadow="True" Padding="6"
+           WidthRequest="72" HeightRequest="100"
+           BackgroundColor="{Binding BackgroundColor}"
+           BorderColor="{Binding BorderColor}">
         <Grid>
             <Grid.GestureRecognizers>
                 <TapGestureRecognizer 
@@ -64,11 +17,17 @@
             </Grid.GestureRecognizers>
             <!--  The Label binds to the whole object ('.') so CardViewModel.ToString() is used  -->
             <Label
-                x:Name="CardLabel" FontAttributes="Bold" FontSize="20"
-                HorizontalOptions="Center"
+                FontAttributes="Bold" FontSize="20"
+                HorizontalOptions="Start"
                 Text="{Binding CardString}"
-                TextColor="{Binding UiCardColor}"
-                VerticalOptions="Center" />
+                TextColor="{Binding TextColor}"
+                VerticalOptions="Start" />
+            <Label
+                FontAttributes="Bold" FontSize="20"
+                HorizontalOptions="End"
+                Text="{Binding CardString}"
+                TextColor="{Binding TextColor}"
+                VerticalOptions="End" />
         </Grid>
     </Frame>
 </ContentView>

@@ -1,7 +1,7 @@
 namespace GameClientPoco
 {
     // 명령어의 종류를 정의
-    public enum CommandType { Draw, MoveToPile, MoveToFoundation, MoveWasteToPile, MoveWasteToFoundation, Quit, Unknown }
+    public enum CommandType { Draw, MovePileToPile, MovePileToFoundation, MoveWasteToPile, MoveWasteToFoundation, Quit, Unknown }
 
     // 파싱된 결과를 담는 객체
     public class CardCommand
@@ -12,7 +12,7 @@ namespace GameClientPoco
         public int Count { get; set; } = 1;
         public bool IsValid { get; set; } = true;
 
-        public override string ToString()
+        public string GetString()
         {
             return $"Type {Type.ToString()} From {From} To {To} Count {Count} IsValid {IsValid}";
         }
@@ -41,14 +41,14 @@ namespace GameClientPoco
                     },
                     "m" => new CardCommand 
                     { 
-                        Type = CommandType.MoveToPile, 
+                        Type = CommandType.MovePileToPile, 
                         From = int.Parse(parts[1]) - 1, 
                         To = int.Parse(parts[2]) - 1,
                         Count = parts.Length > 3 ? int.Parse(parts[3]) : 1 
                     },
                     "f" => new CardCommand 
                     { 
-                        Type = CommandType.MoveToFoundation, 
+                        Type = CommandType.MovePileToFoundation, 
                         From = int.Parse(parts[1]) - 1, 
                         To = int.Parse(parts[2]) - 1 
                     },
