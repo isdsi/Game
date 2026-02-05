@@ -49,7 +49,7 @@ namespace GameClientPoco
             Random rnd = new Random(_seed);
 
             //_deck = _deck.OrderBy(x => rnd.Next()).ToList();
-            // OrderBy 대신 코드 내에서 랜덤 정렬
+            // OrderBy 대신 코드 내에서 랜덤 정렬. Fisher-Yates
             int n = _deck.Count;
             while (n > 1)
             {

@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.Messaging;
 using GameClientPoco;
+using Microsoft.Maui.Layouts;
 
 namespace GameClientMaui;
 
@@ -77,21 +78,28 @@ public partial class CardStackView : ContentView
 
     private void UpdateStack()
     {
-        if (CardGrid == null)
-            return;
         if (ViewModel == null)
             return;
-        CardGrid.Children.Clear();
-        if (ViewModel.Cards == null) return;
+        if (CardAbsoluteStack == null || ViewModel?.Cards == null)
+            return;
+
+        CardAbsoluteStack.Children.Clear();
+
+        // 배경용 보더는 유지하고 싶다면 Clear 후에 다시 넣거나, 
+        // 보더를 제외한 카드들만 관리하는 로직이 필요합니다.
+        // 여기서는 단순화를 위해 카드들만 추가하는 예시입니다.
 
         int index = 0;
         foreach (var cardVM in ViewModel.Cards)
         {
-            // 이제 cardVM을 그대로 BindingContext에 주입하면 끝!
             var cardView = new CardView { BindingContext = cardVM };
 
-            CardGrid.Add(cardView);
-            cardView.TranslationY = index * OffsetY;
+            // [핵심] 각 카드의 위치를 절대 좌표로 지정
+            // X: 0, Y: index * OffsetY, Width: 부모너비(100%), Height: 카드높이(예: 120)
+            AbsoluteLayout.SetLayoutBounds(cardView, new Rect(0, index * OffsetY, 1, 120));
+            AbsoluteLayout.SetLayoutFlags(cardView, AbsoluteLayoutFlags.WidthProportional);
+
+            CardAbsoluteStack.Children.Add(cardView);
             index++;
         }
     }
