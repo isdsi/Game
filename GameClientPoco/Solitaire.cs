@@ -106,21 +106,6 @@ namespace GameClientPoco
                     }
                     break;
                 case CommandType.MoveWasteToFoundation: // Waste에서 Foundation으로
-/*                    
-                    if (_waste.Count > 0)
-                    {
-                        for (int i = 0; i < FoundationCount; i++)
-                        {
-                            if (CanMovePileToFoundation(_waste.Last(), i))
-                            {
-                                _foundations[i].Add(_waste.Last());
-                                _waste.RemoveAt(_waste.Count - 1);
-                                result = true;
-                                break;
-                            }
-                        }
-                    }
-*/
                     if (_waste.Count > 0)
                     {
                         T topWasteCard = _waste.Last();
