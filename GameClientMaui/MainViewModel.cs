@@ -35,7 +35,7 @@ namespace GameClientMaui
         public CardStackViewModel[] FoundationStacks { get; }
         public CardStackViewModel[] PileStacks { get; }
 
-        CardStackViewModel SelectedStackVM;
+        CardStackViewModel? SelectedStackVM = null;
 
         private State state = State.Unknown;
 
@@ -144,11 +144,17 @@ namespace GameClientMaui
                     break;
 
                 case State.MoveWasteTo:
+                    if (SelectedStackVM == null)
+                    {
+                        state = State.Unknown;
+                        break;
+                    }
                     if (message.StackVM != null && message.StackVM.Type == StackType.Foundation)
                     {
                         CardCommand command = new CardCommand
                         {
-                            Type = CommandType.MoveWasteToFoundation
+                            Type = CommandType.MoveWasteToFoundation,
+                            To = message.StackVM.Index
                         };
                         if (_solitaire.ExecuteCommand(command) == true)
                         {
@@ -169,11 +175,41 @@ namespace GameClientMaui
                             UpdateStack();
                         }
                     }
+                    if (SelectedStackVM != null)
+                        SelectedStackVM.IsSelected = false;
+                    state = State.Unknown;
+                    break;
+
+                case State.MoveFoundationTo:
+                    if (SelectedStackVM == null)
+                    {
+                        state = State.Unknown;
+                        break;
+                    }
+                    if (message.StackVM != null && message.StackVM.Type == StackType.Pile)
+                    {
+                        CardCommand command = new CardCommand
+                        {
+                            Type = CommandType.MoveFoundationToPile,
+                            From = SelectedStackVM.Index,
+                            To = message.StackVM.Index
+                        };
+                        if (_solitaire.ExecuteCommand(command) == true)
+                        {
+                            _solitaire.CheckFlipTopCards();
+                            UpdateStack();
+                        }
+                    }
                     SelectedStackVM.IsSelected = false;
                     state = State.Unknown;
                     break;
 
                 case State.MovePileTo:
+                    if (SelectedStackVM == null)
+                    {
+                        state = State.Unknown;
+                        break;
+                    }
                     if (message.StackVM != null && message.StackVM.Type == StackType.Foundation)
                     {
                         CardCommand command = new CardCommand

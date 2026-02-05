@@ -86,7 +86,7 @@ public class SolitaireTests
         // ProcessInput 대신 파싱된 객체를 직접 넘겨주는 로직을 테스트
         game.ExecuteCommand(drawCommand); 
 
-        // Assert: 리플렉션이나 Public 프로퍼티를 통해 덱/쓰레기통 상태 확인
+        // Assert: 리플렉션이나 Public 프로퍼티를 통해 Deck/Waste 상태 확인
         // (예: wasteCount가 1 증가했는지 등)
     }
     [Fact]
@@ -96,7 +96,7 @@ public class SolitaireTests
         var game = new Solitaire<Card>(_mockLogger.Object, _deck, _waste, _foundations, _piles,
             (s, r) => new Card(s, r));
 
-        // 리플렉션을 이용해 foundations 더미에 가짜로 13장씩 채우기
+        // 리플렉션을 이용해 foundations 에 가짜로 13장씩 채우기
         var field = typeof(Solitaire<Card>).GetField("_foundations", 
             System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
         Assert.NotNull(field);
@@ -313,5 +313,186 @@ public class SolitaireTests
         // Assert: 최종적으로 승리 조건이 달성되었는지 확인
         Assert.True(game.IsGameWon(), "143단계 후에는 반드시 승리 상태여야 합니다.");
         */
+        // Arrange: 동일한 시드로 게임 초기화
+        var game = new Solitaire<Card>(_mockLogger.Object, _deck, _waste, _foundations, _piles,
+            (s, r) => new Card(s, r), 777);
+
+        // 143개의 명령어 리스트 (사용자가 입력했던 순서대로)
+        string[] winningMoves = new[] {
+            "d",
+            "mwf", 
+            "d", 
+            "mwp 7", 
+            "d", 
+            "d", 
+            "mwp 5", 
+            "d", 
+            "mpp 7 2 1", 
+            "mpp 6 2 1", 
+            "m 7 3 1", 
+            "m 6 3 1", 
+            "m 6 3 1", 
+            "mpp 6 3 1", 
+            "mpp 2 6 2", 
+            "m 2 6 1", 
+            "m 2 6 1", 
+            "mpp 2 6 1", 
+            "d", 
+            "d", 
+            "mwp 2", 
+            "d", 
+            "d", 
+            "d", 
+            "d", 
+            "d", 
+            "d", 
+            "d", 
+            "d", 
+            "mwp 7", 
+            "d", 
+            "mwp 6", 
+            "d", 
+            "mwp 2", 
+            "mpp 7 2 3", 
+            "mpp 6 1 5", 
+            "mpp 3 1 2", 
+            "mpp 7 2 1", 
+            "mpp 4 7 1", 
+            "d", 
+            "d", 
+            "mwp 1", 
+            "d", 
+            "mwf", 
+            "d", 
+            "mwp 2", 
+            "d", 
+            "mwp 2", 
+            "d", 
+            "mwp 7", 
+            "d", 
+            "d", 
+            "d", 
+            "d", 
+            "d", 
+            "mwp 4", 
+            "d", 
+            "mwp 2", 
+            "mpp 7 2 3", 
+            "mpp 7 3 1", 
+            "d", 
+            "mwp 4", 
+            "mpp 6 4 1", 
+            "mpf 6 3", 
+            "mpp 6 3 1", 
+            "mpp 4 6 4", 
+            "d", 
+            "d", 
+            "d", 
+            "d", 
+            "d", 
+            "d", 
+            "d", 
+            "d", 
+            "d", 
+            "mpf 1 3", 
+            "mpf 6 2", 
+            "mpf 5 2", 
+            "mpf 5 3", 
+            "mpp 6 7 1", 
+            "mpp 5 7 1", 
+            "mpf 5 4", 
+            "mpf 2 4", 
+            "mwp 1", 
+            "mpf 1 1", 
+            "mpf 2 1", 
+            "mpf 1 4", 
+            "mpf 2 4", 
+            "mpf 4 4", 
+            "mpp 4 7 1", 
+            "mpp 7 4 3", 
+            "mpf 1 1", 
+            "mpf 2 1", 
+            "d", 
+            "d", 
+            "d", 
+            "mwp 5", 
+            "mwp 5", 
+            "mwp 5", 
+            "d", 
+            "mpf 2 4", 
+            "mpp 1 4 6", 
+            "mpp 3 1 3", 
+            "mpp 3 4 1", 
+            "mpp 7 1 1", 
+            "mpp 7 6 1", 
+            "mpp 5 1 4", 
+            "mwp 5", 
+            "d", 
+            "mfp 1 1", 
+            "mwp 1", 
+            "d", 
+            "mfp 4 2", 
+            "mwp 2", 
+            "d", 
+            "mwp 4", 
+            "mpf 2", 
+            "mpf 4 2", 
+            "mpf 1 2", 
+            "mpf 4 3", 
+            "mpf 1 1", 
+            "mpf 2 3", 
+            "mpf 4 2", 
+            "mpf 1 2", 
+            "mpf 2 4", 
+            "mpf 4 1", 
+            "mpf 5 3", 
+            "mpf 1 3", 
+            "mpf 2 1", 
+            "mpf 4 4", 
+            "mpf 5 2", 
+            "mpf 1 4", 
+            "mpf 2 2", 
+            "mpf 4 1", 
+            "d", 
+            "mwp 4", 
+            "mpf 4 3", 
+            "mpf 1 1", 
+            "mpf 2 3", 
+            "mpf 4 2", 
+            "mpf 6 4", 
+            "mpf 1 4", 
+            "mpf 2 2", 
+            "mpf 4 1", 
+            "mpf 6 3", 
+            "mpf 1 3", 
+            "mpf 2 1", 
+            "mpf 4 4", 
+            "mpf 6 2", 
+            "mpf 1 4", 
+            "mpf 2 2", 
+            "mpf 4 3", 
+            "mpf 6 1", 
+            "mpf 1 3", 
+            "mpf 2 1", 
+            "mpf 4 4", 
+            "mpf 6 2"
+        };
+
+        // Act: 143번의 명령 수행
+        foreach (var move in winningMoves)
+        {
+            // 143번의 과정 중 어디서든 예외가 발생하면 테스트 실패
+            //game.ProcessInput(move);
+            CardCommand command = CommandParser.Parse(move);
+            game.ExecuteCommand(command);
+
+            // 필요하다면 각 스텝마다 중간 상태를 체크하는 코드를 넣을 수도 있음
+
+            game.CheckFlipTopCards();
+        }
+
+        // Assert: 최종적으로 승리 조건이 달성되었는지 확인
+        Assert.True(game.IsGameWon(), "157단계 후에는 반드시 승리 상태여야 합니다.");
+
     }
 }

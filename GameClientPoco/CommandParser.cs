@@ -1,7 +1,7 @@
 namespace GameClientPoco
 {
     // 명령어의 종류를 정의
-    public enum CommandType { Draw, MovePileToPile, MovePileToFoundation, MoveWasteToPile, MoveWasteToFoundation, Quit, Unknown }
+    public enum CommandType { Draw, MovePileToPile, MovePileToFoundation, MoveWasteToPile, MoveWasteToFoundation, MoveFoundationToPile, Quit, Unknown }
 
     // 파싱된 결과를 담는 객체
     public class CardCommand
@@ -34,25 +34,35 @@ namespace GameClientPoco
                 {
                     "d" => new CardCommand { Type = CommandType.Draw },
                     "q" => new CardCommand { Type = CommandType.Quit },
-                    "mw" => new CardCommand 
+                    "mwp" => new CardCommand 
                     { 
                         Type = CommandType.MoveWasteToPile, 
                         To = int.Parse(parts[1]) - 1 
                     },
-                    "m" => new CardCommand 
+                    "mfp" => new CardCommand
+                    {
+                        Type = CommandType.MoveFoundationToPile,
+                        From = int.Parse(parts[1]) - 1, // Foundation 번호 (1~4)
+                        To = int.Parse(parts[2]) - 1    // Pile 번호 (1~7)
+                    },
+                    "mpp" => new CardCommand 
                     { 
                         Type = CommandType.MovePileToPile, 
                         From = int.Parse(parts[1]) - 1, 
                         To = int.Parse(parts[2]) - 1,
                         Count = parts.Length > 3 ? int.Parse(parts[3]) : 1 
                     },
-                    "f" => new CardCommand 
+                    "mpf" => new CardCommand 
                     { 
                         Type = CommandType.MovePileToFoundation, 
                         From = int.Parse(parts[1]) - 1, 
                         To = int.Parse(parts[2]) - 1 
                     },
-                    "fw" => new CardCommand { Type = CommandType.MoveWasteToFoundation },
+                    "mwf" => new CardCommand 
+                    { 
+                        Type = CommandType.MoveWasteToFoundation,
+                        To = parts.Length > 1 ? int.Parse(parts[1]) - 1 : -1
+                    },
                     _ => new CardCommand { Type = CommandType.Unknown, IsValid = false }
                 };
             }
