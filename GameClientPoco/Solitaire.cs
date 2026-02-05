@@ -49,7 +49,7 @@ namespace GameClientPoco
             Random rnd = new Random(_seed);
 
             //_deck = _deck.OrderBy(x => rnd.Next()).ToList();
-            // OrderBy 대신 코드 내에서 랜덤 정렬
+            // OrderBy 대신 코드 내에서 랜덤 정렬. Fisher-Yates
             int n = _deck.Count;
             while (n > 1)
             {
@@ -82,7 +82,7 @@ namespace GameClientPoco
                 case CommandType.Draw:
                     HandleDraw(); // 기존 d 로직
                     break;
-                case CommandType.MoveWasteToPile: // 쓰레기통에서 더미로 이동 (mw [to])
+                case CommandType.MoveWasteToPile: // Waste에서 Pile로 이동 (mw [to])
                     if (_waste.Count > 0)
                     {
                         if (CanMoveWasteToPile(_waste.Last(), command.To))
@@ -93,11 +93,11 @@ namespace GameClientPoco
                         }
                     }
                     break;
-                case CommandType.MovePileToPile: // 더미 간 이동 (m [from] [to] [count])
+                case CommandType.MovePileToPile: // Pile 간 이동 (m [from] [to] [count])
                     MoveCards(command.From, command.To, command.Count);
                     result = true;
                     break;
-                case CommandType.MovePileToFoundation: // 더미에서 파운데이션으로
+                case CommandType.MovePileToFoundation: // Pile에서 Foundation으로
                     if (_piles[command.From].Count > 0 && CanMovePileToFoundation(_piles[command.From].Last(), command.To))
                     {
                         _foundations[command.To].Add(_piles[command.From].Last());
@@ -105,18 +105,48 @@ namespace GameClientPoco
                         result = true;
                     }
                     break;
-                case CommandType.MoveWasteToFoundation: // 쓰레기통에서 파운데이션으로
+                case CommandType.MoveWasteToFoundation: // Waste에서 Foundation으로
                     if (_waste.Count > 0)
                     {
-                        for (int i = 0; i < FoundationCount; i++)
+                        T topWasteCard = _waste.Last();
+
+                        // 1. 목적지가 지정된 경우 (To가 0 이상)
+                        if (command.To >= 0 && command.To < FoundationCount)
                         {
-                            if (CanMovePileToFoundation(_waste.Last(), i))
+                            if (CanMovePileToFoundation(topWasteCard, command.To))
                             {
-                                _foundations[i].Add(_waste.Last());
+                                _foundations[command.To].Add(topWasteCard);
                                 _waste.RemoveAt(_waste.Count - 1);
                                 result = true;
-                                break;
                             }
+                        }
+                        // 2. 목적지가 지정되지 않은 경우 (기존 자동 탐색 로직 유지)
+                        else
+                        {
+                            for (int i = 0; i < FoundationCount; i++)
+                            {
+                                if (CanMovePileToFoundation(topWasteCard, i))
+                                {
+                                    _foundations[i].Add(topWasteCard);
+                                    _waste.RemoveAt(_waste.Count - 1);
+                                    result = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    break;
+
+                case CommandType.MoveFoundationToPile: // Foundation에서 Pile로 이동
+                    if (command.From >= 0 && command.From < FoundationCount && _foundations[command.From].Count > 0)
+                    {
+                        T cardToMove = _foundations[command.From].Last();
+                        // 기존 CanMoveWasteToPile 로직이 "카드 한 장이 Pile로 갈 수 있는가"를 체크하므로 그대로 재활용 가능합니다.
+                        if (CanMoveWasteToPile(cardToMove, command.To))
+                        {
+                            _piles[command.To].Add(cardToMove);
+                            _foundations[command.From].RemoveAt(_foundations[command.From].Count - 1);
+                            result = true;
                         }
                     }
                     break;
@@ -141,7 +171,7 @@ namespace GameClientPoco
                 {
                     c.IsFaceUp = false;
                 }
-                _deck.Reverse(); // 덱을 다시 뒤집을 때 순서 유지
+                _deck.Reverse(); // Deck을 다시 뒤집을 때 순서 유지
             }
             else
             {
@@ -172,7 +202,7 @@ namespace GameClientPoco
                     bunch.Add(_piles[from][startIndex + i]);
                 }
 
-                // 2. 원본 더미에서 해당 구간을 삭제합니다.
+                // 2. 원본 Pile에서 해당 구간을 삭제합니다.
                 // 뒤에서부터 지워야 인덱스 붕괴를 막을 수 있습니다.
                 //_piles[from].RemoveRange(startIndex, count);
                 for (int i = (startIndex + count - 1); i >= startIndex; i--)
@@ -180,7 +210,7 @@ namespace GameClientPoco
                     _piles[from].RemoveAt(i);
                 }
 
-                // 3. 대상 더미(to)에 확보한 뭉치를 추가합니다.
+                // 3. 대상 Pile(to)에 확보한 뭉치를 추가합니다.
                 //_piles[to].AddRange(bunch);
                 for (int i = 0; i < bunch.Count; i++)
                 {
@@ -217,7 +247,7 @@ namespace GameClientPoco
 
         public bool IsGameWon()
         {
-            // FoundationCount개의 파운데이션이 각각 SuitCardCount장의 카드를 가지고 있으면 승리
+            // FoundationCount개의 Foundation이 각각 SuitCardCount장의 카드를 가지고 있으면 승리
             return _foundations.All(f => f.Count == SuitCardCount);
         }
     }

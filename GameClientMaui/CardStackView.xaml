@@ -2,15 +2,19 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="GameClientMaui.CardStackView">
-    <Frame CornerRadius="8" HasShadow="True" Padding="3" Margin="10" WidthRequest="80" 
-           BackgroundColor="{Binding BackgroundColor}"
-           BorderColor="{Binding BorderColor}">
-        <Grid x:Name="CardGrid" VerticalOptions="Start">
-        </Grid>
-        <Frame.GestureRecognizers>
-            <TapGestureRecognizer 
-                    Command="{Binding ClickCommand}"
-                    CommandParameter="{Binding .}"/>
-        </Frame.GestureRecognizers>
-    </Frame>
+    <AbsoluteLayout x:Name="Container" HorizontalOptions="Fill" VerticalOptions="Fill">
+        <Border x:Name="BackgroundBorder"
+            AbsoluteLayout.LayoutBounds="0, 0, 1, 1"
+            AbsoluteLayout.LayoutFlags="All"
+            Stroke="{Binding BorderColor}"
+            BackgroundColor="{Binding BackgroundColor}">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="8" />
+            </Border.StrokeShape>
+        </Border>
+
+        <AbsoluteLayout x:Name="CardAbsoluteStack"
+                    AbsoluteLayout.LayoutBounds="0, 0, 1, 1"
+                    AbsoluteLayout.LayoutFlags="All" />
+    </AbsoluteLayout>
 </ContentView>

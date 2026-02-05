@@ -3,33 +3,31 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="GameClientMaui.MainPage"
              xmlns:local="clr-namespace:GameClientMaui">
-    <Grid RowDefinitions="1*,2*" ColumnDefinitions="1*,1*,1*,1*,1*,1*,1*">
+    <Grid x:Name="MainContainer" IgnoreSafeArea="True">
 
-        <local:CardStackView Grid.Row="0" Grid.Column="0" BindingContext="{Binding FoundationStacks[0]}" OffsetY="1"  UpdateTick="{Binding UpdateTick}"/>
-        <local:CardStackView Grid.Row="0" Grid.Column="1" BindingContext="{Binding FoundationStacks[1]}" OffsetY="1"  UpdateTick="{Binding UpdateTick}"/>
-        <local:CardStackView Grid.Row="0" Grid.Column="2" BindingContext="{Binding FoundationStacks[2]}" OffsetY="1"  UpdateTick="{Binding UpdateTick}"/>
-        <local:CardStackView Grid.Row="0" Grid.Column="3" BindingContext="{Binding FoundationStacks[3]}" OffsetY="1"  UpdateTick="{Binding UpdateTick}"/>
-        <local:CardStackView Grid.Row="0" Grid.Column="5" BindingContext="{Binding WasteStack}" OffsetY="1" UpdateTick="{Binding UpdateTick}"/>
-        <local:CardStackView Grid.Row="0" Grid.Column="6" BindingContext="{Binding DeckStack}" OffsetY="1" UpdateTick="{Binding UpdateTick}"/>
-        
-        <local:CardStackView Grid.Row="1" Grid.Column="0" BindingContext="{Binding PileStacks[0]}"  UpdateTick="{Binding UpdateTick}"/>
-        <local:CardStackView Grid.Row="1" Grid.Column="1" BindingContext="{Binding PileStacks[1]}"  UpdateTick="{Binding UpdateTick}"/>
-        <local:CardStackView Grid.Row="1" Grid.Column="2" BindingContext="{Binding PileStacks[2]}"  UpdateTick="{Binding UpdateTick}"/>
-        <local:CardStackView Grid.Row="1" Grid.Column="3" BindingContext="{Binding PileStacks[3]}"  UpdateTick="{Binding UpdateTick}"/>
-        <local:CardStackView Grid.Row="1" Grid.Column="4" BindingContext="{Binding PileStacks[4]}"  UpdateTick="{Binding UpdateTick}"/>
-        <local:CardStackView Grid.Row="1" Grid.Column="5" BindingContext="{Binding PileStacks[5]}"  UpdateTick="{Binding UpdateTick}"/>
-        <local:CardStackView Grid.Row="1" Grid.Column="6" BindingContext="{Binding PileStacks[6]}"  UpdateTick="{Binding UpdateTick}"/>
-        
-        <!-- 반투명 효과 
-        <Border BackgroundColor="White" VerticalOptions="Fill" HorizontalOptions="Fill"
-                Grid.RowSpan="2"
-                Grid.ColumnSpan="7"
-                IsVisible="False"
-            Opacity="0.6" InputTransparent="True">
-            <Border.StrokeShape>
-                <RoundRectangle CornerRadius="10" />
-            </Border.StrokeShape>
-        </Border>
-        -->
+        <AbsoluteLayout x:Name="GameCanvas"
+                        WidthRequest="800"
+                        HeightRequest="730"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center"
+                        BackgroundColor="#F0F0F0">
+
+            <local:CardStackView AbsoluteLayout.LayoutBounds="0, 0, 110, 140" BindingContext="{Binding FoundationStacks[0]}" OffsetY="1" UpdateTick="{Binding UpdateTick}"/>
+            <local:CardStackView AbsoluteLayout.LayoutBounds="115, 0, 110, 140" BindingContext="{Binding FoundationStacks[1]}" OffsetY="1" UpdateTick="{Binding UpdateTick}"/>
+            <local:CardStackView AbsoluteLayout.LayoutBounds="230, 0, 110, 140" BindingContext="{Binding FoundationStacks[2]}" OffsetY="1" UpdateTick="{Binding UpdateTick}"/>
+            <local:CardStackView AbsoluteLayout.LayoutBounds="345, 0, 110, 140" BindingContext="{Binding FoundationStacks[3]}" OffsetY="1" UpdateTick="{Binding UpdateTick}"/>
+
+            <local:CardStackView AbsoluteLayout.LayoutBounds="575, 0, 110, 140" BindingContext="{Binding WasteStack}" OffsetY="1" UpdateTick="{Binding UpdateTick}"/>
+            <local:CardStackView AbsoluteLayout.LayoutBounds="690, 0, 110, 140" BindingContext="{Binding DeckStack}" OffsetY="1" UpdateTick="{Binding UpdateTick}"/>
+
+            <local:CardStackView AbsoluteLayout.LayoutBounds="0, 140, 110, 600" BindingContext="{Binding PileStacks[0]}" UpdateTick="{Binding UpdateTick}"/>
+            <local:CardStackView AbsoluteLayout.LayoutBounds="115, 140, 110, 600" BindingContext="{Binding PileStacks[1]}" UpdateTick="{Binding UpdateTick}"/>
+            <local:CardStackView AbsoluteLayout.LayoutBounds="230, 140, 110, 600" BindingContext="{Binding PileStacks[2]}" UpdateTick="{Binding UpdateTick}"/>
+            <local:CardStackView AbsoluteLayout.LayoutBounds="345, 140, 110, 600" BindingContext="{Binding PileStacks[3]}" UpdateTick="{Binding UpdateTick}"/>
+            <local:CardStackView AbsoluteLayout.LayoutBounds="460, 140, 110, 600" BindingContext="{Binding PileStacks[4]}" UpdateTick="{Binding UpdateTick}"/>
+            <local:CardStackView AbsoluteLayout.LayoutBounds="575, 140, 110, 600" BindingContext="{Binding PileStacks[5]}" UpdateTick="{Binding UpdateTick}"/>
+            <local:CardStackView AbsoluteLayout.LayoutBounds="690, 140, 110, 600" BindingContext="{Binding PileStacks[6]}" UpdateTick="{Binding UpdateTick}"/>
+
+        </AbsoluteLayout>
     </Grid>
 </ContentPage>

@@ -46,13 +46,14 @@ namespace GameClientConsole
                 //Console.Clear();
                 DrawBoard();
                 Console.WriteLine("\n[ 명령어 안내 ]");
-                Console.WriteLine(" d: 카드 뽑기 | mw 1: 쓰레기통->더미1 | m 1 2 3: 더미1(3장)->더미2");
-                Console.WriteLine(" f 1 2: 더미1->F2 | fw: 쓰레기통->F | q: 종료");
+                Console.WriteLine(" d: 카드 뽑기 | mwp 1: Waste->Pile1 | mfp 1 4 : Foundation1 -> Pile4 | mpp 1 2 3: Pile1(3장)->Pile2");
+                Console.WriteLine(" mpf 1 2: Pile1->Foundation2 | mwf (2): Waste->Foundation(인자 있으면 2번)| q: 종료");
                 Console.Write("\n명령 입력 > ");
                 
                 string? input = Console.ReadLine()?.ToLower();
                 if (string.IsNullOrEmpty(input) || input == "q") break;
-                
+
+                _logger.LogInformation(input);
                 ProcessInput(input);
                 _solitaire.CheckFlipTopCards(); // 최하단 카드를 open 한다.
             }
@@ -66,16 +67,16 @@ namespace GameClientConsole
             
             string deckStr = _deck.Count > 0 ? "[XX]" : "[  ]";
             string wasteStr = _waste.Count > 0 ? ((ICard)_waste.Last()).GetString() : "[  ]";
-            Console.WriteLine($"덱: {deckStr} ({_deck.Count}장)    쓰레기통: {wasteStr}");
+            Console.WriteLine($"Deck: {deckStr} ({_deck.Count}장)    Waste: {wasteStr}");
             
-            Console.Write("파운데이션: ");
+            Console.Write("Foundation: ");
             for (int i = 0; i < Solitaire<Card>.FoundationCount; i++)
             {
                 string fndStr = _foundations[i].Count > 0 ? ((ICard)_foundations[i].Last()).GetString() : "[  ]";
                 Console.Write($"{i+1}:{fndStr} ");
             }
             
-            Console.WriteLine("\n\n테이블 더미 (1~7):");
+            Console.WriteLine("\n\nPile (1~7):");
             int maxHeight = _piles.Max(p => p.Count);
             for (int row = 0; row < Math.Max(maxHeight, 1); row++)
             {

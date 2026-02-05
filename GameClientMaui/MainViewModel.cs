@@ -35,7 +35,8 @@ namespace GameClientMaui
         public CardStackViewModel[] FoundationStacks { get; }
         public CardStackViewModel[] PileStacks { get; }
 
-        CardStackViewModel SelectedStackVM;
+        CardStackViewModel? SelectedStackVM = null;
+        CardViewModel? SelectedCardVM = null;
 
         private State state = State.Unknown;
 
@@ -107,6 +108,16 @@ namespace GameClientMaui
             return -1;
         }
 
+        public int IndexOf(CardStackViewModel stackVM, CardViewModel cardVM)
+        {
+            for (int i = 0; i < stackVM.Cards.Count; i++)
+            {
+                if (stackVM.Cards[i] == cardVM)
+                    return i;
+            }
+            return -1;
+        }
+
         public void Receive(CardStackClickMessage message)
         {
             Trace.WriteLine($"메세지 수신 {message.GetString()} ");
@@ -137,18 +148,29 @@ namespace GameClientMaui
                     }
                     else if (message.StackVM != null && message.StackVM.Type == StackType.Pile)
                     {
-                        message.StackVM.IsSelected = true;
-                        SelectedStackVM = message.StackVM;
-                        state = State.MovePileTo;
+                        if (message.CardVM != null) // 꼭 카드를 선택해야한다.
+                        {
+                            message.StackVM.IsSelected = true;
+                            message.CardVM.IsSelected = true;
+                            SelectedStackVM = message.StackVM;
+                            SelectedCardVM = message.CardVM;
+                            state = State.MovePileTo;
+                        }
                     }
                     break;
 
                 case State.MoveWasteTo:
+                    if (SelectedStackVM == null)
+                    {
+                        state = State.Unknown;
+                        break;
+                    }
                     if (message.StackVM != null && message.StackVM.Type == StackType.Foundation)
                     {
                         CardCommand command = new CardCommand
                         {
-                            Type = CommandType.MoveWasteToFoundation
+                            Type = CommandType.MoveWasteToFoundation,
+                            To = message.StackVM.Index
                         };
                         if (_solitaire.ExecuteCommand(command) == true)
                         {
@@ -169,11 +191,41 @@ namespace GameClientMaui
                             UpdateStack();
                         }
                     }
+                    if (SelectedStackVM != null)
+                        SelectedStackVM.IsSelected = false;
+                    state = State.Unknown;
+                    break;
+
+                case State.MoveFoundationTo:
+                    if (SelectedStackVM == null)
+                    {
+                        state = State.Unknown;
+                        break;
+                    }
+                    if (message.StackVM != null && message.StackVM.Type == StackType.Pile)
+                    {
+                        CardCommand command = new CardCommand
+                        {
+                            Type = CommandType.MoveFoundationToPile,
+                            From = SelectedStackVM.Index,
+                            To = message.StackVM.Index
+                        };
+                        if (_solitaire.ExecuteCommand(command) == true)
+                        {
+                            _solitaire.CheckFlipTopCards();
+                            UpdateStack();
+                        }
+                    }
                     SelectedStackVM.IsSelected = false;
                     state = State.Unknown;
                     break;
 
                 case State.MovePileTo:
+                    if (SelectedStackVM == null)
+                    {
+                        state = State.Unknown;
+                        break;
+                    }
                     if (message.StackVM != null && message.StackVM.Type == StackType.Foundation)
                     {
                         CardCommand command = new CardCommand
@@ -190,12 +242,19 @@ namespace GameClientMaui
                     }
                     if (message.StackVM != null && message.StackVM.Type == StackType.Pile)
                     {
+                        if (SelectedCardVM == null)
+                        {
+                            state = State.Unknown;
+                            break;
+                        }
+                        int count = SelectedStackVM.Cards.Count;
+                        int index = IndexOf(SelectedStackVM, SelectedCardVM);
                         CardCommand command = new CardCommand
                         {
                             Type = CommandType.MovePileToPile,
                             From = SelectedStackVM.Index,
                             To = message.StackVM.Index,
-                            Count = 1
+                            Count = count - index
                         };
                         if (_solitaire.ExecuteCommand(command) == true)
                         {
@@ -204,6 +263,8 @@ namespace GameClientMaui
                         }
                     }
                     SelectedStackVM.IsSelected = false;
+                    if (SelectedCardVM != null)
+                        SelectedCardVM.IsSelected = false;
                     state = State.Unknown;
                     break;
             }

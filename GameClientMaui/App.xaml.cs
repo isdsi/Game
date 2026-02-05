@@ -12,7 +12,7 @@ namespace GameClientMaui
         protected override Window CreateWindow(IActivationState? activationState)
         {
             var window = base.CreateWindow(activationState);
-
+#if WINDOWS
             // 저장된 값 불러오기 (기본값은 800x600 등으로 설정)
             window.X = Preferences.Default.Get("WinX", 100.0);
             window.Y = Preferences.Default.Get("WinY", 100.0);
@@ -27,7 +27,7 @@ namespace GameClientMaui
                 Preferences.Default.Set("WinWidth", window.Width);
                 Preferences.Default.Set("WinHeight", window.Height);
             };
-
+#endif
             return window;
         }
     }
