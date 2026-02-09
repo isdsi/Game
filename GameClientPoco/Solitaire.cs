@@ -92,6 +92,7 @@ namespace GameClientPoco
             {
                 case CommandType.Draw:
                     HandleDraw(); // 기존 d 로직
+                    result = true;
                     break;
                 case CommandType.MoveWasteToPile: // Waste에서 Pile로 이동 (mw [to])
                     if (_waste.Count > 0)

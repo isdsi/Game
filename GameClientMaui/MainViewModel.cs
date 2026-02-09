@@ -22,6 +22,9 @@ namespace GameClientMaui
         IRecipient<CardStackClickMessage>,
         IRecipient<CardViewModelClickMessage>
     {
+        [ObservableProperty]
+        private bool isGameWon = false;
+
         private ILogger _logger;
 
         private Solitaire<CardViewModel> _solitaire;
@@ -107,6 +110,55 @@ namespace GameClientMaui
             }
         }
 
+        private void RestartGame()
+        {
+            _logger.LogInformation("Restarting game.");
+
+            // Clear all collections. This will notify the UI to remove the cards.
+            _deck.Clear();
+            _waste.Clear();
+            foreach (var f in _foundations) f.Clear();
+            foreach (var p in _piles) p.Clear();
+
+            // Create a new game instance. This will populate the cleared collections.
+            _solitaire = new Solitaire<CardViewModel>(_logger, _deck, _waste, _foundations, _piles,
+                (s, r) => new CardViewModel(s, r), 777);
+
+            // Reset UI state
+            IsGameWon = false;
+            state = State.Unknown;
+            if (SelectedStackVM != null)
+            {
+                SelectedStackVM.IsSelected = false;
+                SelectedStackVM = null;
+            }
+            if (SelectedCardVM != null)
+            {
+                SelectedCardVM.IsSelected = false;
+                SelectedCardVM = null;
+            }
+
+            // Refresh settings
+            RefreshSettings();
+
+            // Tell the UI to re-draw everything.
+            UpdateStack();
+        }
+
+        private void ExecuteAndCheckWin(CardCommand command)
+        {
+            if (_solitaire.ExecuteCommand(command))
+            {
+                _solitaire.CheckFlipTopCards();
+                UpdateStack();
+                if (_solitaire.IsGameWon())
+                {
+                    IsGameWon = true;
+                    _logger.LogInformation("축하합니다! 승리했습니다!");
+                }
+            }
+        }
+
         public int IndexOf(CardStackViewModel[] stackVMArray, CardStackViewModel stackVM)
         {
             for (int i = 0; i < stackVMArray.Length; i++)
@@ -129,16 +181,27 @@ namespace GameClientMaui
 
         public void Receive(CardStackClickMessage message)
         {
+            if (IsGameWon)
+            {
+                RestartGame();
+                return;
+            }
+
             Trace.WriteLine($"메세지 수신 {message.GetString()} ");
             if (message.StackName == "Deck")
             {
-                _solitaire.ExecuteCommand(new CardCommand { Type = CommandType.Draw, IsValid = false });
-                UpdateStack();
+                ExecuteAndCheckWin(new CardCommand { Type = CommandType.Draw });
             }
         }
 
         public void Receive(CardViewModelClickMessage message)
         {
+            if (IsGameWon)
+            {
+                RestartGame();
+                return;
+            }
+
             Trace.WriteLine($"메세지 수신 {message.GetString()} ");
             
             switch (state)
@@ -146,8 +209,7 @@ namespace GameClientMaui
                 case State.Unknown:
                     if (message.StackVM != null && message.StackVM.Type == StackType.Deck)
                     {
-                        _solitaire.ExecuteCommand(new CardCommand { Type = CommandType.Draw, IsValid = false });
-                        UpdateStack();
+                        ExecuteAndCheckWin(new CardCommand { Type = CommandType.Draw });
                     }
                     else if (message.StackVM != null && message.StackVM.Type == StackType.Waste)
                     {
@@ -181,11 +243,7 @@ namespace GameClientMaui
                             Type = CommandType.MoveWasteToFoundation,
                             To = message.StackVM.Index
                         };
-                        if (_solitaire.ExecuteCommand(command) == true)
-                        {
-                            _solitaire.CheckFlipTopCards();
-                            UpdateStack();
-                        }
+                        ExecuteAndCheckWin(command);
                     }
                     if (message.StackVM != null && message.StackVM.Type == StackType.Pile)
                     {
@@ -194,11 +252,7 @@ namespace GameClientMaui
                             Type = CommandType.MoveWasteToPile,
                             To = message.StackVM.Index
                         };
-                        if (_solitaire.ExecuteCommand(command) == true)
-                        {
-                            _solitaire.CheckFlipTopCards();
-                            UpdateStack();
-                        }
+                        ExecuteAndCheckWin(command);
                     }
                     if (SelectedStackVM != null)
                         SelectedStackVM.IsSelected = false;
@@ -219,11 +273,7 @@ namespace GameClientMaui
                             From = SelectedStackVM.Index,
                             To = message.StackVM.Index
                         };
-                        if (_solitaire.ExecuteCommand(command) == true)
-                        {
-                            _solitaire.CheckFlipTopCards();
-                            UpdateStack();
-                        }
+                        ExecuteAndCheckWin(command);
                     }
                     SelectedStackVM.IsSelected = false;
                     state = State.Unknown;
@@ -243,11 +293,7 @@ namespace GameClientMaui
                             From = SelectedStackVM.Index,
                             To = message.StackVM.Index
                         };
-                        if (_solitaire.ExecuteCommand(command) == true)
-                        {
-                            _solitaire.CheckFlipTopCards();
-                            UpdateStack();
-                        }
+                        ExecuteAndCheckWin(command);
                     }
                     if (message.StackVM != null && message.StackVM.Type == StackType.Pile)
                     {
@@ -265,11 +311,7 @@ namespace GameClientMaui
                             To = message.StackVM.Index,
                             Count = count - index
                         };
-                        if (_solitaire.ExecuteCommand(command) == true)
-                        {
-                            _solitaire.CheckFlipTopCards();
-                            UpdateStack();
-                        }
+                        ExecuteAndCheckWin(command);
                     }
                     SelectedStackVM.IsSelected = false;
                     if (SelectedCardVM != null)

@@ -1,4 +1,4 @@
-using CommunityToolkit.Mvvm.Messaging;
+﻿﻿using CommunityToolkit.Mvvm.Messaging;
 using GameClientPoco;
 using Microsoft.Maui.Layouts;
 
@@ -63,6 +63,8 @@ public partial class CardStackView : ContentView
         this.Resources["CardBackgroundColor"] = Colors.White;
         this.Resources["CardBorderColor"] = Color.Parse("#F8F8F8");
 #endif
+
+        this.SizeChanged += (s, e) => UpdateStack();
     }
 
         // Convenience strongly-typed accessor for the view model in code-behind.
@@ -94,6 +96,19 @@ public partial class CardStackView : ContentView
         if (CardAbsoluteStack == null || ViewModel?.Cards == null)
             return;
 
+        double cardHeight = 120;
+        double currentOffsetY = OffsetY;
+
+        if (ViewModel.Type == StackType.Pile && ViewModel.Cards.Count > 1)
+        {
+            double totalHeight = (ViewModel.Cards.Count - 1) * OffsetY + cardHeight;
+            if (this.Height > 0 && totalHeight > this.Height / 2)
+            {
+                currentOffsetY = (this.Height / 2 - cardHeight) / (ViewModel.Cards.Count - 1);
+                if (currentOffsetY < 0) currentOffsetY = 0;
+            }
+        }
+
         // 1. 현재 카드들의 화면상 위치(부모 컨테이너 기준)를 저장합니다.
         // 스택 간 이동 시, 이전 스택에서의 절대 위치를 기억하기 위함입니다.
         foreach (var child in CardAbsoluteStack.Children)
@@ -119,7 +134,7 @@ public partial class CardStackView : ContentView
 
             // [핵심] 각 카드의 위치를 절대 좌표로 지정
             // X: 0, Y: index * OffsetY, Width: 부모너비(100%), Height: 카드높이(예: 120)
-            AbsoluteLayout.SetLayoutBounds(cardView, new Rect(0, index * OffsetY, 1, 120));
+            AbsoluteLayout.SetLayoutBounds(cardView, new Rect(0, index * currentOffsetY, 1, cardHeight));
             AbsoluteLayout.SetLayoutFlags(cardView, AbsoluteLayoutFlags.WidthProportional);
 
             // 목표 오프셋 계산
@@ -137,20 +152,20 @@ public partial class CardStackView : ContentView
                     int count = ViewModel.Cards.Count;
                     if (count <= 3)
                     {
-                        targetTranslationY = index * 30;
+                        targetTranslationY = index * 15;
                     }
                     else
                     {
                         if (index < count - 3)
                             targetTranslationY = index * 1;
                         else
-                            targetTranslationY = (count - 3) * 1 + (index - (count - 3)) * 30;
+                            targetTranslationY = (count - 3) * 1 + (index - (count - 3)) * 15;
                     }
                 }
             }
             else
             {
-                targetTranslationY = index * OffsetY;
+                targetTranslationY = index * currentOffsetY;                
             }
 
             cardView.TranslationY = targetTranslationY;
@@ -161,7 +176,7 @@ public partial class CardStackView : ContentView
                 Rect prev = cardVM.Bounds.Value;
                 // 현재 스택 기준에서의 시작 좌표 계산 (LayoutY인 index * OffsetY를 고려해야 함)
                 double startX = prev.X - this.X; 
-                double startY = prev.Y - this.Y - (index * OffsetY);
+                double startY = prev.Y - this.Y - (index * currentOffsetY);
 
                 // 위치 차이가 있을 때만 애니메이션 실행
                 if (Math.Abs(startX) > 1 || Math.Abs(startY - targetTranslationY) > 1)
