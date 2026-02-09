@@ -44,8 +44,9 @@ namespace GameClientMaui
             if (GameCanvas == null || width <= 0 || height <= 0) return;
 
             // 1. 기준 해상도 (이 크기를 바탕으로 모든 카드를 배치하셨죠?)
-            double targetWidth = 800;
-            double targetHeight = 730;
+            // XAML에서 설정된 WidthRequest/HeightRequest를 기준 해상도로 사용합니다.
+            double targetWidth = GameCanvas.WidthRequest > 0 ? GameCanvas.WidthRequest : 800;
+            double targetHeight = GameCanvas.HeightRequest > 0 ? GameCanvas.HeightRequest : 730;
 
             // 2. 창 크기에 따른 비율 계산
             double scaleX = width / targetWidth;

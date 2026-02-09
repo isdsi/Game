@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="GameClientMaui.MainPage"
@@ -10,7 +10,8 @@
                         HeightRequest="730"
                         HorizontalOptions="Center"
                         VerticalOptions="Center"
-                        BackgroundColor="#F0F0F0">
+                        BackgroundColor="#F0F0F0"
+                        AnchorX="0.5" AnchorY="0.5">
 
             <local:CardStackView AbsoluteLayout.LayoutBounds="0, 0, 110, 140" BindingContext="{Binding FoundationStacks[0]}" OffsetY="1" UpdateTick="{Binding UpdateTick}"/>
             <local:CardStackView AbsoluteLayout.LayoutBounds="115, 0, 110, 140" BindingContext="{Binding FoundationStacks[1]}" OffsetY="1" UpdateTick="{Binding UpdateTick}"/>
