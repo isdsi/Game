@@ -44,6 +44,16 @@ public partial class CardStackView : ContentView
         set => SetValue(UpdateTickProperty, value);
     }
 
+    public static readonly BindableProperty DrawCountProperty =
+        BindableProperty.Create(nameof(DrawCount), typeof(int), typeof(CardStackView), 1,
+            propertyChanged: (bindable, oldVal, newVal) => ((CardStackView)bindable).UpdateStack());
+
+    public int DrawCount
+    {
+        get => (int)GetValue(DrawCountProperty);
+        set => SetValue(DrawCountProperty, value);
+    }
+
     public CardStackView()
     {
         InitializeComponent();
@@ -73,6 +83,7 @@ public partial class CardStackView : ContentView
             // MyStackColorProperty: View에 정의된 BindableProperty
             // nameof(vm.ThemeColor): ViewModel에 정의된 속성 이름
             this.SetBinding(CardStackView.CardsProperty, nameof(vm.Cards));
+            this.SetBinding(CardStackView.DrawCountProperty, nameof(vm.DrawCount));
         }
     }
 
@@ -92,6 +103,7 @@ public partial class CardStackView : ContentView
         int index = 0;
         foreach (var cardVM in ViewModel.Cards)
         {
+            // 이제 cardVM을 그대로 BindingContext에 주입하면 끝!
             var cardView = new CardView { BindingContext = cardVM };
 
             // [핵심] 각 카드의 위치를 절대 좌표로 지정
@@ -100,6 +112,32 @@ public partial class CardStackView : ContentView
             AbsoluteLayout.SetLayoutFlags(cardView, AbsoluteLayoutFlags.WidthProportional);
 
             CardAbsoluteStack.Children.Add(cardView);
+            if (ViewModel.Type == StackType.Waste)
+            {
+                if (DrawCount == 1)
+                {
+                    cardView.TranslationY = index * OffsetY;
+                }
+                else if (DrawCount == 3)
+                {
+                    int count = ViewModel.Cards.Count;
+                    if (count <= 3)
+                    {
+                        cardView.TranslationY = index * 30;
+                    }
+                    else
+                    {
+                        if (index < count - 3)
+                            cardView.TranslationY = index * 1;
+                        else
+                            cardView.TranslationY = (count - 3) * 1 + (index - (count - 3)) * 30;
+                    }
+                }
+            }
+            else
+            {
+                cardView.TranslationY = index * OffsetY;
+            }
             index++;
         }
     }

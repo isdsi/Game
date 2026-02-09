@@ -2,6 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using GameClientPoco;
 using Microsoft.Extensions.Logging;
+using Microsoft.Maui.Storage;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -82,6 +83,14 @@ namespace GameClientMaui
             }
 
             UpdateStack();
+        }
+
+        public void RefreshSettings()
+        {
+            int drawCount = Preferences.Default.Get("DrawCount", 1);
+            WasteStack.DrawCount = drawCount;
+            // Solitaire 인스턴스에 설정 적용
+            _solitaire.DrawCount = drawCount;
         }
 
         private void UpdateStack()

@@ -9,11 +9,17 @@
 
 
     <TabBar>
-        <Tab Title="랭킹" Icon="dotnet_bot.png">
+        <Tab Title="메인" Icon="dotnet_bot.png">
             <ShellContent
         Title="Home"
         ContentTemplate="{DataTemplate local:MainPage}"
         Route="MainPage" />
+        </Tab>
+        <Tab Title="설정" Icon="dotnet_bot.png">
+            <ShellContent
+        Title="Setting"
+        ContentTemplate="{DataTemplate local:SettingsPage}"
+        Route="SettingsPage" />
         </Tab>
     </TabBar>
 </Shell>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:GameClientMaui"
+             x:Class="GameClientMaui.SettingsPage"
+             Title="Settings">
+    <ContentPage.BindingContext>
+        <local:SettingsViewModel />
+    </ContentPage.BindingContext>
+    
+    <VerticalStackLayout Spacing="20" Padding="30">
+        <Label Text="Game Settings" 
+               FontSize="Large" 
+               FontAttributes="Bold" />
+        
+        <Label Text="Draw Count (Deck to Waste)" 
+               FontSize="Medium" 
+               Margin="0,10,0,0"/>
+        
+        <RadioButton Content="Draw 1 Card" IsChecked="{Binding IsDraw1}" />
+        <RadioButton Content="Draw 3 Cards" IsChecked="{Binding IsDraw3}" />
+    </VerticalStackLayout>
+</ContentPage>

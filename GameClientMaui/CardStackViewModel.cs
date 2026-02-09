@@ -29,6 +29,9 @@ namespace GameClientMaui
         [ObservableProperty]
         private long _updateTick = 1;
 
+        [ObservableProperty]
+        private int _drawCount = 1;
+
         private bool _isSelected = false;
         public bool IsSelected
         {

@@ -25,6 +25,17 @@ namespace GameClientPoco
 
         private readonly Func<Suit, int, T> _cardFactory;
 
+        private int _drawCount = 1;
+        public int DrawCount
+        {
+            get => _drawCount;
+            set
+            {
+                if (_drawCount == 1 || _drawCount == 3)
+                    _drawCount = value;
+            }
+        }
+
         public Solitaire(ILogger logger,
             IList<T> deck,
             IList<T> waste,
@@ -175,10 +186,24 @@ namespace GameClientPoco
             }
             else
             {
-                T c = _deck[0];
-                _deck.RemoveAt(0);
-                c.IsFaceUp = true;
-                _waste.Add(c);
+                if (_drawCount == 1)
+                {
+                    T c = _deck[0];
+                    _deck.RemoveAt(0);
+                    c.IsFaceUp = true;
+                    _waste.Add(c);
+                }
+                else if (_drawCount == 3)
+                {
+                    for (int i = 0; i < 3; i++)
+                    {
+                        if (_deck.Count == 0) break;
+                        T c = _deck[0];
+                        _deck.RemoveAt(0);
+                        c.IsFaceUp = true;
+                        _waste.Add(c);
+                    }
+                }
             }
         }
 
