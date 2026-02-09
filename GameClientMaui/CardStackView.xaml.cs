@@ -94,6 +94,17 @@ public partial class CardStackView : ContentView
         if (CardAbsoluteStack == null || ViewModel?.Cards == null)
             return;
 
+        // 1. 현재 카드들의 화면상 위치(부모 컨테이너 기준)를 저장합니다.
+        // 스택 간 이동 시, 이전 스택에서의 절대 위치를 기억하기 위함입니다.
+        foreach (var child in CardAbsoluteStack.Children)
+        {
+            if (child is CardView cv && cv.BindingContext is CardViewModel cvm)
+            {
+                // this.X/Y: 부모 내 스택 위치, cv.X/Y: 스택 내 카드 위치, Translation: 애니메이션 오프셋
+                cvm.Bounds = new Rect(this.X + cv.X + cv.TranslationX, this.Y + cv.Y + cv.TranslationY, cv.Width, cv.Height);
+            }
+        }
+
         CardAbsoluteStack.Children.Clear();
 
         // 배경용 보더는 유지하고 싶다면 Clear 후에 다시 넣거나, 
@@ -111,33 +122,56 @@ public partial class CardStackView : ContentView
             AbsoluteLayout.SetLayoutBounds(cardView, new Rect(0, index * OffsetY, 1, 120));
             AbsoluteLayout.SetLayoutFlags(cardView, AbsoluteLayoutFlags.WidthProportional);
 
+            // 목표 오프셋 계산
+            double targetTranslationY = 0;
+
             CardAbsoluteStack.Children.Add(cardView);
             if (ViewModel.Type == StackType.Waste)
             {
                 if (DrawCount == 1)
                 {
-                    cardView.TranslationY = index * OffsetY;
+                    targetTranslationY = index * OffsetY;
                 }
                 else if (DrawCount == 3)
                 {
                     int count = ViewModel.Cards.Count;
                     if (count <= 3)
                     {
-                        cardView.TranslationY = index * 30;
+                        targetTranslationY = index * 30;
                     }
                     else
                     {
                         if (index < count - 3)
-                            cardView.TranslationY = index * 1;
+                            targetTranslationY = index * 1;
                         else
-                            cardView.TranslationY = (count - 3) * 1 + (index - (count - 3)) * 30;
+                            targetTranslationY = (count - 3) * 1 + (index - (count - 3)) * 30;
                     }
                 }
             }
             else
             {
-                cardView.TranslationY = index * OffsetY;
+                targetTranslationY = index * OffsetY;
             }
+
+            cardView.TranslationY = targetTranslationY;
+
+            // 2. 애니메이션: 이전 위치(Bounds)가 있다면 그곳에서부터 현재 위치로 이동
+            if (cardVM.Bounds.HasValue)
+            {
+                Rect prev = cardVM.Bounds.Value;
+                // 현재 스택 기준에서의 시작 좌표 계산 (LayoutY인 index * OffsetY를 고려해야 함)
+                double startX = prev.X - this.X; 
+                double startY = prev.Y - this.Y - (index * OffsetY);
+
+                // 위치 차이가 있을 때만 애니메이션 실행
+                if (Math.Abs(startX) > 1 || Math.Abs(startY - targetTranslationY) > 1)
+                {
+                    cardView.TranslationX = startX;
+                    cardView.TranslationY = startY;
+                    cardView.TranslateTo(0, targetTranslationY, 250, Easing.Linear);
+                }
+            }
+
             index++;
         }
     }

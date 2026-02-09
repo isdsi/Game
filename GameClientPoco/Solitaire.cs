@@ -178,7 +178,7 @@ namespace GameClientPoco
                 _waste.Clear();
 
                 //_deck.ForEach(c => c.IsFaceUp = false);
-                foreach (var c in _waste)
+                foreach (var c in _deck)
                 {
                     c.IsFaceUp = false;
                 }
