@@ -3,6 +3,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="GameClientMaui.CardStackView"
              xmlns:local="clr-namespace:GameClientMaui">
+    <ContentView.GestureRecognizers>
+        <TapGestureRecognizer 
+                    Command="{Binding ClickCommand}"
+                    CommandParameter="{Binding .}" />
+    </ContentView.GestureRecognizers>
     <AbsoluteLayout x:Name="Container" HorizontalOptions="Fill" VerticalOptions="Fill">
         <Border x:Name="BackgroundBorder"
             AbsoluteLayout.LayoutBounds="0, 0, 1, 1"
@@ -12,16 +17,10 @@
             <Border.StrokeShape>
                 <RoundRectangle CornerRadius="8" />
             </Border.StrokeShape>
-            <Border.GestureRecognizers>
-                <TapGestureRecognizer 
-                    Command="{Binding ClickCommand}"
-                    CommandParameter="{Binding .}" />
-            </Border.GestureRecognizers>
         </Border>
 
         <AbsoluteLayout x:Name="CardAbsoluteStack"
                     AbsoluteLayout.LayoutBounds="0, 0, 1, 1"
-                    AbsoluteLayout.LayoutFlags="All"
-                    InputTransparent="True"/>
+                    AbsoluteLayout.LayoutFlags="All"/>
     </AbsoluteLayout>
 </ContentView>

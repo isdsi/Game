@@ -73,6 +73,8 @@ namespace GameClientMaui
 #endif
             }
         }
+        
+        public Rect? Bounds { get; set; }
 
         public CardViewModel(Suit suit, int rank)
         {
