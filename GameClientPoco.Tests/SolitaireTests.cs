@@ -121,198 +121,6 @@ public class SolitaireTests
     [Fact]
     public void Game_WithSeed777_ShouldReachWinConditionIn143Moves()
     {
-/*
-        // Arrange: 동일한 시드로 게임 초기화
-        var game = new Solitaire<Card>(_mockLogger.Object, _deck, _waste, _foundations, _piles,
-            (s, r) => new Card(s, r), 777);
-
-        // 143개의 명령어 리스트 (사용자가 입력했던 순서대로)
-        string[] winningMoves = new[] {
-            // 1 / 12
-            "m 5 4 1", 
-            "m 7 5 1", 
-            "m 2 7 1", 
-            "d", 
-            "d", 
-            "d", 
-            "fw 1", 
-            "d", 
-            "d", 
-            "mw 7",
-            "d", 
-            "mw 6", 
-
-            // 2 / 12
-            "d", 
-            "d", 
-            "fw 2", 
-            "d", 
-            "d", 
-            "d", 
-            "mw 5", ////** 
-            "d", 
-            "d", 
-            "d", 
-            "d", 
-            "d", 
-
-            // 3 / 12
-            "mw 4", 
-            "d", 
-            "d", 
-            "d", 
-            "mw 4", 
-            "mw 4", 
-            "d", 
-            "d", 
-            "d", 
-            "d",  // + 1
-            "mw 3",
-            "d", 
-            "fw 3", 
-
-            // 4 / 12
-            "d", 
-            "d", 
-            "d", 
-            "d", 
-            "d", 
-            "d", 
-            "f 4 2", 
-            "d", 
-            "d", 
-            "d", 
-            "d", 
-            "d", 
-
-            // 5 / 12
-            "d", 
-            "mw 3", 
-            "m 5 3 3", 
-            "m 1 5 1", 
-            "m 6 1 2", 
-            "m 5 6 2", 
-            "f 5 4", 
-            "f 5 3", 
-            "f 6 4", 
-            "d", // + 1
-            "mw 1", 
-            "m 3 1 6", 
-            "m 4 3 4", 
-
-            // 6 / 12
-            "m 6 1 2", 
-            "d", 
-            "mw 6", 
-            "d", 
-            "d", 
-            "d", 
-            "d", 
-            "d", 
-            "d", 
-            "d", 
-            "mw 5", 
-            "d", 
-
-            // 7 / 12
-            "d", 
-            "fw 1", 
-            "d", 
-            "mw 5", 
-            "d", 
-            "d", 
-            "d", 
-            "mw 5", 
-            "m 6 5 2", 
-            "f 6 2", 
-            "d",  // 비었다
-            "d", 
-
-            // 8 / 12
-            "d", 
-            "d", 
-            "d", 
-            "d", 
-            "d", 
-            "d", 
-            "fw 4", 
-            "f 1 3", 
-            "f 3 1", 
-            "f 1 1", 
-            "f 7 4", 
-            "f 3 3", 
-
-            // 9 / 12
-            "f 2 1", 
-            "f 3 4", 
-            "f 7 3", 
-            "f 3 3", 
-            "f 7 4", 
-            "f 7 2", 
-            "f 1 2", 
-            "fw 2", 
-            "f 3 4", 
-            "f 1 1", 
-            "f 1 2", 
-            "f 3 1", 
-
-            // 10 / 12
-            "m 6 2 1", 
-            "f 1 4", 
-            "f 6 1", 
-            "f 4 1", 
-            "m 4 2 1", 
-            "d",  // 비었음
-            "d", 
-            "d", 
-            "fw 3", 
-            "f 4 2", 
-            "f 7 2", 
-            "f 5 4", 
-
-            // 11 / 12
-            "f 5 2", 
-            "f 7 2", 
-            "f 7 3", 
-            "f 1 3", 
-            "f 7 3", 
-            "f 1 4", 
-            "f 1 3", 
-            "f 5 4", 
-            "d", 
-            "fw 1", 
-            "fw 1",  // 비었음
-            "d", 
-
-            // 12 / 12
-            "fw 3", 
-            "d", 
-            "f 1 4", 
-            "f 2 1", 
-            "f 5 2", 
-            "f 1 3", 
-            "f 2 2", 
-            "f 5 1", 
-            "fw 4", 
-
-        };
-
-        // Act: 143번의 명령 수행
-        foreach (var move in winningMoves)
-        {
-            // 143번의 과정 중 어디서든 예외가 발생하면 테스트 실패
-            //game.ProcessInput(move);
-            CardCommand command = CommandParser.Parse(move);
-            game.ExecuteCommand(command);
-
-            // 필요하다면 각 스텝마다 중간 상태를 체크하는 코드를 넣을 수도 있음
-
-            game.CheckFlipTopCards();
-        }
-
-        // Assert: 최종적으로 승리 조건이 달성되었는지 확인
-        Assert.True(game.IsGameWon(), "143단계 후에는 반드시 승리 상태여야 합니다.");
-        */
         // Arrange: 동일한 시드로 게임 초기화
         var game = new Solitaire<Card>(_mockLogger.Object, _deck, _waste, _foundations, _piles,
             (s, r) => new Card(s, r), 777);
@@ -327,15 +135,9 @@ public class SolitaireTests
             "d", 
             "mwp 5", 
             "d", 
-            "mpp 7 2 1", 
             "mpp 6 2 1", 
-            "m 7 3 1", 
-            "m 6 3 1", 
-            "m 6 3 1", 
             "mpp 6 3 1", 
             "mpp 2 6 2", 
-            "m 2 6 1", 
-            "m 2 6 1", 
             "mpp 2 6 1", 
             "d", 
             "d", 
@@ -395,10 +197,8 @@ public class SolitaireTests
             "d", 
             "d", 
             "mpf 1 3", 
-            "mpf 6 2", 
             "mpf 5 2", 
             "mpf 5 3", 
-            "mpp 6 7 1", 
             "mpp 5 7 1", 
             "mpf 5 4", 
             "mpf 2 4", 
@@ -435,7 +235,6 @@ public class SolitaireTests
             "mwp 2", 
             "d", 
             "mwp 4", 
-            "mpf 2", 
             "mpf 4 2", 
             "mpf 1 2", 
             "mpf 4 3", 
@@ -479,16 +278,24 @@ public class SolitaireTests
         };
 
         // Act: 143번의 명령 수행
+        int i = 0;
         foreach (var move in winningMoves)
         {
             // 143번의 과정 중 어디서든 예외가 발생하면 테스트 실패
             //game.ProcessInput(move);
             CardCommand command = CommandParser.Parse(move);
-            game.ExecuteCommand(command);
-
-            // 필요하다면 각 스텝마다 중간 상태를 체크하는 코드를 넣을 수도 있음
+            // 실행 전 백업
+            var snapshot = game.BackupState();
+            bool result = game.ExecuteCommand(command);
+            // 실행 후 비교 — 변화가 없으면 null, 변화가 있으면 diff 문자열
+            string? diff = game.CompareState(snapshot);
+            if (!result || diff == null)
+                Console.WriteLine($"[{i}] '{move}' result={result}, 변화없음");
+            //else
+            //    Console.WriteLine($"[{i}] '{move}'\n{diff}");
 
             game.CheckFlipTopCards();
+            i++;
         }
 
         // Assert: 최종적으로 승리 조건이 달성되었는지 확인

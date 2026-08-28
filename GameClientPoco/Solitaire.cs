@@ -276,5 +276,73 @@ namespace GameClientPoco
             // FoundationCount개의 Foundation이 각각 SuitCardCount장의 카드를 가지고 있으면 승리
             return _foundations.All(f => f.Count == SuitCardCount);
         }
+
+        // ── 상태 스냅샷 ──────────────────────────────────────────────────────────
+
+        /// <summary>현재 게임 상태(deck/waste/foundations/piles)의 불변 스냅샷</summary>
+        public sealed class GameStateSnapshot
+        {
+            public IReadOnlyList<string> Deck        { get; }
+            public IReadOnlyList<string> Waste       { get; }
+            public IReadOnlyList<IReadOnlyList<string>> Foundations { get; }
+            public IReadOnlyList<IReadOnlyList<string>> Piles       { get; }
+
+            internal GameStateSnapshot(
+                IReadOnlyList<string> deck,
+                IReadOnlyList<string> waste,
+                IReadOnlyList<IReadOnlyList<string>> foundations,
+                IReadOnlyList<IReadOnlyList<string>> piles)
+            {
+                Deck        = deck;
+                Waste       = waste;
+                Foundations = foundations;
+                Piles       = piles;
+            }
+        }
+
+        /// <summary>현재 상태를 스냅샷으로 저장해 반환합니다.</summary>
+        public GameStateSnapshot BackupState()
+        {
+            return new GameStateSnapshot(
+                deck:        _deck.Select(c => c.GetString()).ToList().AsReadOnly(),
+                waste:       _waste.Select(c => c.GetString()).ToList().AsReadOnly(),
+                foundations: _foundations
+                    .Select(f => (IReadOnlyList<string>)f.Select(c => c.GetString()).ToList().AsReadOnly())
+                    .ToList().AsReadOnly(),
+                piles: _piles
+                    .Select(p => (IReadOnlyList<string>)p.Select(c => c.GetString()).ToList().AsReadOnly())
+                    .ToList().AsReadOnly()
+            );
+        }
+
+        /// <summary>
+        /// 저장된 스냅샷과 현재 상태를 비교합니다.
+        /// 변화가 없으면 null, 변화가 있으면 차이를 설명하는 문자열을 반환합니다.
+        /// </summary>
+        public string? CompareState(GameStateSnapshot before)
+        {
+            GameStateSnapshot after = BackupState();
+            var sb = new StringBuilder();
+
+            if (!before.Deck.SequenceEqual(after.Deck))
+                sb.AppendLine($"  Deck    : [{string.Join(", ", before.Deck)}] → [{string.Join(", ", after.Deck)}]");
+
+            if (!before.Waste.SequenceEqual(after.Waste))
+                sb.AppendLine($"  Waste   : [{string.Join(", ", before.Waste)}] → [{string.Join(", ", after.Waste)}]");
+
+            for (int i = 0; i < FoundationCount; i++)
+            {
+                if (!before.Foundations[i].SequenceEqual(after.Foundations[i]))
+                    sb.AppendLine($"  Found[{i}]: [{string.Join(", ", before.Foundations[i])}] → [{string.Join(", ", after.Foundations[i])}]");
+            }
+
+            for (int i = 0; i < PileCount; i++)
+            {
+                if (!before.Piles[i].SequenceEqual(after.Piles[i]))
+                    sb.AppendLine($"  Pile [{i}]: [{string.Join(", ", before.Piles[i])}] → [{string.Join(", ", after.Piles[i])}]");
+            }
+
+            return sb.Length > 0 ? sb.ToString() : null;
+        }
     }
 }
